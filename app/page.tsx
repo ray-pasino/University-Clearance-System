@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="h-screen flex flex-col items-center ">
+    <div className=" flex flex-col items-center">
       <div className="flex sm:space-x-2 items-center justify-center">
         {/* GCTU logo */}
         <Image
@@ -34,14 +34,14 @@ export default function Home() {
       </p>
 
       {/* sign in options */}
-      <div className="flex flex-col items-center space-y-8  justify-center">
-        <Link href="/" className="text-center">
+      <div className="mb-12 flex flex-col items-center space-y-8  justify-center">
+        <Link href="/student-signin" className="text-center">
           <button className="font-sans cursor-pointer student bg-blue-800  px-20 py-4 sm:px-24 md:px-40 md:py-4  text-white rounded-md text-center transition duration-300 transform hover:scale-105 hover:shadow-sm">
             Student Sign In
           </button>
         </Link>
 
-        <Link href="/" className="text-center">
+        <Link href="/admin-signin" className="text-center">
           <button className="cursor-pointer admin bg-blue-800  px-20 py-4 sm:px-24 md:px-40 md:py-4  text-white rounded-md text-center transition duration-300 transform hover:scale-105 hover:shadow-sm">
             Admin Sign In
           </button>
