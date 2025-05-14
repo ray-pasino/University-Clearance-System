@@ -34,7 +34,7 @@ export default function Home() {
       </p>
 
       {/* sign in options */}
-      <div className="mb-12 flex flex-col items-center space-y-8  justify-center">
+      <div className="mb-10 flex flex-col items-center space-y-8  justify-center">
         <Link href="/student-signin" className="text-center">
           <button className="font-sans cursor-pointer student bg-blue-800  px-20 py-4 sm:px-24 md:px-40 md:py-4  text-white rounded-md text-center transition duration-300 transform hover:scale-105 hover:shadow-sm">
             Student Sign In
