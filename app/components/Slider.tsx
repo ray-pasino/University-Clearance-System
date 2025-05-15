@@ -22,7 +22,7 @@ const Slider = ({ open, setOpen }: Props) => {
   return (
     <>
       <div className={`gradient fixed z-10 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${!open ? 'hidden' : ''}`}  onClick={() => setOpen(false)}></div>
-      <div className={`h-screen bg-white w-[70%] sm:w-[40%] md:w-[30%] lg:w-[20%] 2xl:w-[10%] fixed z-20 top-0 left-0 transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`h-screen bg-white w-[70%] sm:w-[40%] md:w-[30%] lg:w-[20%] 2xl:w-[17%] fixed z-20 top-0 left-0 transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div
           className={`slider-container mx-2 ${montserrat.className} h-full flex flex-col top-0 left-0 overflow-hidden`}
         >
