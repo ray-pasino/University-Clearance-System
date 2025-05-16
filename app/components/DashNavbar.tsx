@@ -26,7 +26,7 @@ const DashNavbar = ({openSlider, setOpenSlider}: Props) => {
             alt="GCTU Logo"
             width={500}
             height={500}
-            className="w-12 cursor-pointer"
+            className="w-14 cursor-pointer"
           />
           </Link>
 
@@ -34,7 +34,7 @@ const DashNavbar = ({openSlider, setOpenSlider}: Props) => {
           
 
           {/* menu icon */}
-          <AlignCenter size={32} className="cursor-pointer" onClick={handleOpenSlider}/>
+          <AlignCenter size={34} className="cursor-pointer" onClick={handleOpenSlider}/>
         </div>
       </div>
     </div>

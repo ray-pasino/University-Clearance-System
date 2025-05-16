@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins} from "next/font/google";
+import { Inter} from "next/font/google";
 import "./globals.css";
 import Footer from "./components/Footer";
 
 
 
-const poppins = Poppins({
+const inter = Inter({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-poppins",
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} antialiased min-h-screen`}
+        className={`${inter.variable} antialiased min-h-screen bg-[#f2f2f2]`}
       >    
         
         {children}
