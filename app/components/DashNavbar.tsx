@@ -16,7 +16,7 @@ const DashNavbar = ({openSlider, setOpenSlider}: Props) => {
      setOpenSlider(!openSlider)
     }
   return (
-    <div className="fixed w-screen bg-white top-0">
+    <div className="sm:hidden fixed w-screen bg-white top-0">
       <div className="shadow-md">
         <div className="mx-4 flex items-center justify-between">
           {/* GCTU logo */}
@@ -35,6 +35,7 @@ const DashNavbar = ({openSlider, setOpenSlider}: Props) => {
 
           {/* menu icon */}
           <AlignCenter size={34} className="cursor-pointer" onClick={handleOpenSlider}/>
+          
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import React,{useState} from "react";
 import Image from "next/image";
 import { EyeClosed } from 'lucide-react';
 import Link from "next/link";
+import Footer from "../components/Footer";
 
 const page = () => {
 
@@ -67,6 +68,7 @@ const page = () => {
         </form> 
 
       </div>
+      <Footer/>
     </div>  
   );
 };
