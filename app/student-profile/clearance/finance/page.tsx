@@ -1,0 +1,240 @@
+"use client";
+import React, { useState } from "react";
+import DashNavbar from "@/app/components/DashNavbar";
+import Slider from "@/app/components/Slider";
+import Image from "next/image";
+import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import Link from "next/link";
+import Footer from "@/app/components/Footer";
+
+const page = () => {
+  // state for slider
+  const [openSlider, setOpenSlider] = useState<boolean>(false);
+
+  // state for clearance status
+
+  const [clearanceStatus, setClearanceStatus] = useState<
+    "Requested" | "Pending" | "Approved" | "Rejected"
+  >("Pending");
+
+  return (
+    <>
+      <div className="sm:flex">
+        {/* wrap left */}
+        <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
+          <div className="head flex flex-col  w-full">
+            <div className="border-b-1 border-gray-200 py-4">
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  alt="GCTU Logo"
+                  width={500}
+                  height={500}
+                  className="w-8 mx-2 md:w-12 mt-2"
+                />
+              </Link>
+            </div>
+
+            {/* slider body */}
+            <div className="mt-4 flex-1 w-full">
+              <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                  <FilePlus size={22} />
+                  <span className="hidden group-hover:inline">
+                    Request Clearance
+                  </span>
+                </li>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                  <FileSearch size={22} />
+                  <span className="hidden group-hover:inline">
+                    View Clearance
+                  </span>
+                </li>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                  <FileX size={22} />
+                  <span className="hidden group-hover:inline">
+                    Cancel Clearance
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* account settings */}
+            <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
+              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                <ShieldCheck size={22} />
+                <span className="hidden group-hover:inline">Settings</span>
+              </li>
+              <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                <LogOut size={22} />
+                <span className="hidden group-hover:inline">Logout</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* wrap left */}
+
+        {/* wrap-right */}
+        <div className="wrap-right  sm:h-screen flex-1">
+          <DashNavbar openSlider={openSlider} setOpenSlider={setOpenSlider} />
+          <Slider open={openSlider} setOpen={setOpenSlider} />
+
+          <div className="main mx-6 mt-16 sm:mt-0 sm:mx-0 sm:mb-20">
+            <div className="sm:hidden header flex items-center justify-center">
+              <h1 className="mt-6 text-gray-600 text-center font-semibold md:text-md text-lg lg:text-xl">
+                GCTU Clearance System
+              </h1>
+            </div>
+            {/* larger screens */}
+            <div className="hidden header sm:flex items-center justify-center items-center mx-16 md:mx-38 xl:mx-30 mt-2">
+              <h1 className="w-[88%] text-gray-600 text-center font-semibold  md:text-md text-2xl lg:text-xl">
+                GCTU Clearance System
+              </h1>
+
+              <div className="hidden profile-container text-gray-400 sm:flex mt-2  items-center">
+                <Image
+                  src="/user male.png"
+                  height={736}
+                  width={736}
+                  alt="user profile"
+                  className="w-22 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
+                />
+                <div className="ml-2">
+                  <h3 className="font-semibold text-lg sm:text-sm ">
+                    Kwame Ewudzie
+                  </h3>
+                  <p className="text-[10px] sm:text-[8px]">
+                    4231230038@live.gctu.edu.gh
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* student info section */}
+            <div className="info-container flex flex-col sm:mx-10 mt-12">
+              <div className="sm:hidden profile-container  text-gray-400 flex flex-col items-center justify-center mt-10  flex-1">
+                <Image
+                  src="/user male.png"
+                  height={736}
+                  width={736}
+                  alt="user profile"
+                  className="w-22 sm:w-28 bg-gray-300 p-3 rounded-[50%]"
+                />
+                <h3 className="font-semibold text-lg md:text-2xl">
+                  Kwame Ewudzie
+                </h3>
+                <p className="text-[10px] md:texl">
+                  4231230038@live.gctu.edu.gh
+                </p>
+              </div>
+
+              <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff]  text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
+                <h2 className="sm:mb-4 md:text-lg">Clear Finance</h2>
+
+                {/* data table  */}
+                <table className="min-w-full divide-y divide-gray-200  rounded-md overflow-hidden text-sm text-left">
+                  <thead className="bg-gray-100 text-gray-500 uppercase tracking-wider">
+                    <tr className="text-[12px]">
+                      <th className="p-2">Fees</th>
+                      <th className="p-2">Paid</th>
+                      <th className="p-2">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {/* Academic Year 2021 / 2022 */}
+                    <tr className="bg-gray-50">
+                      <td
+                        colSpan="3"
+                        className="py-3 px-2 font-bold text-indigo-400"
+                      >
+                        Academic Year 2021 / 2022
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
+
+                    {/* Academic Year 2022 / 2023 */}
+                    <tr className="bg-gray-50">
+                      <td
+                        colSpan="3"
+                        className="py-3 px-2 font-bold text-indigo-400"
+                      >
+                        Academic Year 2022 / 2023
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
+
+                    {/* Academic Year 2023 / 2024 */}
+                    <tr className="bg-gray-50">
+                      <td
+                        colSpan="3"
+                        className="py-3 px-2 font-bold text-indigo-400"
+                      >
+                        Academic Year 2023 / 2024
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
+                  </tbody>
+
+                  {/* Clearance Status Section */}
+
+                  {/* Clearance Status Section */}
+                  <tfoot>
+                    <tr>
+                      <td colSpan="3" className="pt-6">
+                        <div className="flex items-center space-x-4">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ${
+                              clearanceStatus === "Requested"
+                                ? "bg-blue-100 text-blue-700"
+                                : clearanceStatus === "Pending"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : clearanceStatus === "Approved"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {clearanceStatus}
+                          </span>
+
+                          {(clearanceStatus === "Requested" ||
+                            clearanceStatus === "Pending") && (
+                            <button
+                              onClick={() => setClearanceStatus("Rejected")}
+                              className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-red-100 inline-block px-3 py-1 rounded-full font-semibold text-xs transition-all duration-200"
+                            >
+                              <span className="sm:hidden">Cancel</span>
+                              <span className="hidden sm:inline-block">
+                                Cancel Clearance Request
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* wrap-right */}
+          <Footer />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default page;

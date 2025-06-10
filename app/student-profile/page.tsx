@@ -103,7 +103,7 @@ const page = () => {
             </div>
           </div>
           {/* student info section */}
-          <div className="info-container flex flex-col sm:mx-10 mt-12">
+          <div className="info-container flex flex-col sm:mx-10 sm:mb-10 mt-12">
             <div className="sm:hidden profile-container  text-gray-400 flex flex-col items-center justify-center mt-10  flex-1">
               <Image
                 src="/user male.png"
@@ -180,9 +180,11 @@ const page = () => {
                     Not Requested
                   </span>
                 </li>
+                <Link href='student-profile/clearance'>
                 <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition transform duration-300 hover:scale-105">
                   Request Clearance
                 </button>
+                </Link>
               </ul>
             </div>
           </div>
