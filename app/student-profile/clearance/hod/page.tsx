@@ -23,10 +23,10 @@ const StudentClearancePage = () => {
   // You can add a timer or manual trigger as needed.
 
   return (
-    <>
+   <>
       <div className="sm:flex">
         {/* wrap left */}
-        <div className="wrap-left group hidden sm:fixed sm:flex top-0 left-0 h-screen w-[8%] lg:w-[6%] xl:w-[4.5%] bg-white rounded-r-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out z-50 shadow-md">
+        <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
           <div className="head flex flex-col  w-full">
             <div className="border-b-1 border-gray-200 py-4">
               <Link href="/">
@@ -131,13 +131,13 @@ const StudentClearancePage = () => {
 
                 {clearanceStatus === "pending" && (
                   <div className="mt-4 text-yellow-700 font-semibold">
-                    Your clearance request is pending approval by the Head of Department.
+                    Your clearance request is pending approval by the Dean of Students.
                   </div>
                 )}
 
                 {clearanceStatus === "approved" && (
                   <div className="mt-4 text-green-700 font-semibold">
-                    Congratulations! Your clearance has been approved by the Head of Department.
+                    Congratulations! Your clearance has been approved by the Dean of Students.
                   </div>
                 )}
               </div>
