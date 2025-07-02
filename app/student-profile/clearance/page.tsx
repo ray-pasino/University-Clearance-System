@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
 import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   // state for slider
@@ -26,6 +27,14 @@ const page = () => {
   const handleClearHod = () => setClearHod(!clearHod);
   const handleClearDean = () => setClearDean(!clearDean);
 
+  const router = useRouter();
+    useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+  }, []);
   return (
     <>
       {/* confirmation modal  */}
@@ -46,9 +55,9 @@ const page = () => {
           Do You Want To Initiate Clearance For Finance?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/finance">
-            <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
-              Yes
-            </button>
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
             </Link>
             <button
               className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
@@ -61,131 +70,155 @@ const page = () => {
       </div>
       {/* clear finance confirmation modal */}
 
- {/* clear library confirmation modal */}
-<div
-  className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
-    !clearLibrary ? "hidden" : ""
-  }`}
-  onClick={handleClearLibrary}
-></div>
-<div className="flex items-center justify-center">
-  <div
-    className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
-      !clearLibrary ? "hidden" : ""
-    }`}
-  >
-    Do You Want To Initiate Clearance For Library?
+      {/* clear library confirmation modal */}
+      <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearLibrary ? "hidden" : ""
+        }`}
+        onClick={handleClearLibrary}
+      ></div>
+      <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearLibrary ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance For Library?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/clearance/library">
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearLibrary}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <div className="buttons flex space-x-4 mt-4 sm:mt-8">
-      <Link href='/student-profile/clearance/library'>
-      <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">Yes</button>
-      </Link>
-      <button className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md" onClick={handleClearLibrary}>No</button>
-    </div>
-  </div>
-</div>
+      {/* clear faculty confirmation modal */}
+      <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearFaculty ? "hidden" : ""
+        }`}
+        onClick={handleClearFaculty}
+      ></div>
+      <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearFaculty ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance For Faculty?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/clearance/faculty">
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearFaculty}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
 
+      {/* clear alumni confirmation modal */}
+      <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearAlumni ? "hidden" : ""
+        }`}
+        onClick={handleClearAlumni}
+      ></div>
+      <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearAlumni ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance For Head of Alumni Relations?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/clearance/head-of-alumni">
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearAlumni}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
 
+      {/* clear HOD confirmation modal */}
+      <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearHod ? "hidden" : ""
+        }`}
+        onClick={handleClearHod}
+      ></div>
+      <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearHod ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance For Head of Departments?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/clearance/hod">
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearHod}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
 
-{/* clear faculty confirmation modal */}
-<div
-  className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
-    !clearFaculty ? "hidden" : ""
-  }`}
-  onClick={handleClearFaculty}
-></div>
-<div className="flex items-center justify-center">
-  <div
-    className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
-      !clearFaculty ? "hidden" : ""
-    }`}
-  >
-    Do You Want To Initiate Clearance For Faculty?
-
-    <div className="buttons flex space-x-4 mt-4 sm:mt-8">
-      <Link href="/student-profile/clearance/faculty">
-      <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">Yes</button>
-      </Link>
-      <button className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md" onClick={handleClearFaculty}>No</button>
-    </div>
-  </div>
-</div>
-
-
-
-
-{/* clear alumni confirmation modal */}
-<div
-  className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
-    !clearAlumni ? "hidden" : ""
-  }`}
-  onClick={handleClearAlumni}
-></div>
-<div className="flex items-center justify-center">
-  <div
-    className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
-      !clearAlumni ? "hidden" : ""
-    }`}
-  >
-    Do You Want To Initiate Clearance For Head of Alumni Relations?
-
-    <div className="buttons flex space-x-4 mt-4 sm:mt-8">
-      <Link href="/student-profile/clearance/head-of-alumni">
-      <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">Yes</button>
-      </Link>
-      <button className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md" onClick={handleClearAlumni}>No</button>
-    </div>
-  </div>
-</div>
-
-{/* clear HOD confirmation modal */}
-<div
-  className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
-    !clearHod ? "hidden" : ""
-  }`}
-  onClick={handleClearHod}
-></div>
-<div className="flex items-center justify-center">
-  <div
-    className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
-      !clearHod ? "hidden" : ""
-    }`}
-  >
-    Do You Want To Initiate Clearance For Head of Departments?
-
-    <div className="buttons flex space-x-4 mt-4 sm:mt-8">
-      <Link href="/student-profile/clearance/hod">
-      <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">Yes</button>
-      </Link>
-      <button className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md" onClick={handleClearHod}>No</button>
-    </div>
-  </div>
-</div>
-
-{/* clear Dean confirmation modal */}
-<div
-  className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
-    !clearDean ? "hidden" : ""
-  }`}
-  onClick={handleClearDean}
-></div>
-<div className="flex items-center justify-center">
-  <div
-    className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
-      !clearDean ? "hidden" : ""
-    }`}
-  >
-    Do You Want To Initiate Clearance For Dean of Student Affairs?
-
-    <div className="buttons flex space-x-4 mt-4 sm:mt-8">
-      <Link href="/student-profile/clearance/dean-of-student-affairs">
-      <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">Yes</button>
-      </Link>
-      <button className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md" onClick={handleClearDean}>No</button>
-    </div>
-  </div>
-</div>
-
+      {/* clear Dean confirmation modal */}
+      <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearDean ? "hidden" : ""
+        }`}
+        onClick={handleClearDean}
+      ></div>
+      <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearDean ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance For Dean of Student Affairs?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/clearance/dean-of-student-affairs">
+              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearDean}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* confirmation modal  */}
 
@@ -208,23 +241,38 @@ const page = () => {
             {/* slider body */}
             <div className="mt-4 flex-1 w-full">
               <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FilePlus size={22} />
-                  <span className="hidden group-hover:inline">
-                    Request Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FilePlus size={22} />
+                    <span className="hidden group-hover:inline">
+                      Request Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileSearch size={22} />
-                  <span className="hidden group-hover:inline">
-                    View Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileSearch size={22} />
+                    <span className="hidden group-hover:inline">
+                      View Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileX size={22} />
-                  <span className="hidden group-hover:inline">
-                    Cancel Clearance
-                  </span>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                  <Link
+                    href="student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileX size={22} />
+                    <span className="hidden group-hover:inline">
+                      Cancel Clearance
+                    </span>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -237,7 +285,15 @@ const page = () => {
               </li>
               <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
                 <LogOut size={22} />
-                <span className="hidden group-hover:inline">Logout</span>
+                <span
+                  className="hidden group-hover:inline"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    router.push("/");
+                  }}
+                >
+                  Logout
+                </span>
               </li>
             </ul>
           </div>
@@ -311,9 +367,11 @@ const page = () => {
                       >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/finance">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
@@ -323,9 +381,11 @@ const page = () => {
                       >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/finance">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
                   <li className="flex items-center justify-between ">
@@ -333,43 +393,63 @@ const page = () => {
                       Library
                     </span>{" "}
                     <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"  onClick={handleClearLibrary}>
+                      <button
+                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearLibrary}
+                      >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/library">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"  onClick={handleClearLibrary}>
+                      <button
+                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearLibrary}
+                      >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/library">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
-                           <li className="flex items-center justify-between ">
+                  <li className="flex items-center justify-between ">
                     <span className="font-bold sm:text-lg sm:font-medium">
                       Faculty
                     </span>{" "}
                     <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"  onClick={handleClearFaculty}>
+                      <button
+                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearFaculty}
+                      >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/faculty">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"  onClick={handleClearFaculty}>
+                      <button
+                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearFaculty}
+                      >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/faculty">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
                   <li className="flex items-center justify-between ">
@@ -377,21 +457,31 @@ const page = () => {
                       Head of Alumni Relations
                     </span>{" "}
                     <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"  onClick={handleClearAlumni}>
+                      <button
+                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearAlumni}
+                      >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/head-of-alumni">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300" onClick={handleClearAlumni}>
+                      <button
+                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearAlumni}
+                      >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/head-of-alumni">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
                   <li className="flex items-center justify-between ">
@@ -399,21 +489,31 @@ const page = () => {
                       Head of Departmens
                     </span>{" "}
                     <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300" onClick={handleClearHod}>
+                      <button
+                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearHod}
+                      >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/hod">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button className="bg-blue-200 p-2 px-4  rounded-md cursor-pointer hover:scale-105 transition transform duration-300" onClick={handleClearHod}>
+                      <button
+                        className="bg-blue-200 p-2 px-4  rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearHod}
+                      >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/hod">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
                   <li className="flex items-center justify-between ">
@@ -421,21 +521,31 @@ const page = () => {
                       Dean of Student Affairs
                     </span>{" "}
                     <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300" onClick={handleClearDean}>
+                      <button
+                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearDean}
+                      >
                         <FilePlus size={13} />
                       </button>{" "}
-                      <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        <FileSearch size={13} />
-                      </button>
+                      <Link href="/student-profile/clearance/dean-of-student-affairs">
+                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          <FileSearch size={13} />
+                        </button>
+                      </Link>
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300" onClick={handleClearDean}>
+                      <button
+                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
+                        onClick={handleClearDean}
+                      >
                         Request Clearance
                       </button>{" "}
-                      <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                        View Clearance
-                      </button>
+                      <Link href="/student-profile/clearance/dean-of-student-affairs">
+                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                          View Clearance
+                        </button>
+                      </Link>
                     </span>
                   </li>
                 </ul>

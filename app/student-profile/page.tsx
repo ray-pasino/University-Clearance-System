@@ -1,21 +1,47 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashNavbar from "../components/DashNavbar";
 import Slider from "../components/Slider";
 import Image from "next/image";
 import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
-const page = () => {
-  // state for slider
-  const [openSlider, setOpenSlider] = useState<boolean>(false);
+const Page = () => {
+  const [openSlider, setOpenSlider] = useState(false);
+  const [studentData, setStudentData] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+
+    const fetchStudentData = async () => {
+      try {
+        const res = await axios.get("/api/student/studentdata", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student data", err);
+      }
+    };
+
+    fetchStudentData();
+  }, []);
 
   return (
     <div className="sm:flex">
-      {/* wrap left */}
+      {/* Sidebar */}
       <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
-        <div className="head flex flex-col  w-full">
+        <div className="head flex flex-col w-full">
           <div className="border-b-1 border-gray-200 py-4">
             <Link href="/">
               <Image
@@ -28,37 +54,56 @@ const page = () => {
             </Link>
           </div>
 
-          {/* slider body */}
           <div className="mt-4 flex-1 w-full">
             <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                <FilePlus size={22} />
-                <span className="hidden group-hover:inline">
-                  Request Clearance
-                </span>
+              <li>
+                <Link
+                  href="student-profile/clearance"
+                  className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                >
+                  <FilePlus size={22} />
+                  <span className="hidden group-hover:inline">
+                    Request Clearance
+                  </span>
+                </Link>
               </li>
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                <FileSearch size={22} />
-                <span className="hidden group-hover:inline">
-                  View Clearance
-                </span>
+              <li>
+                <Link
+                  href="student-profile/clearance"
+                  className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                >
+                  <FileSearch size={22} />
+                  <span className="hidden group-hover:inline">
+                    View Clearance
+                  </span>
+                </Link>
               </li>
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                <FileX size={22} />
-                <span className="hidden group-hover:inline">
-                  Cancel Clearance
-                </span>
+              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                <Link
+                  href="student-profile/clearance"
+                  className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                >
+                  <FileX size={22} />
+                  <span className="hidden group-hover:inline">
+                    Cancel Clearance
+                  </span>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* account settings */}
           <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
-            <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+            <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
               <ShieldCheck size={22} />
               <span className="hidden group-hover:inline">Settings</span>
             </li>
-            <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+            <li
+              className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px]"
+              onClick={() => {
+                localStorage.removeItem("token")
+                router.push("/")
+              }}
+            >
               <LogOut size={22} />
               <span className="hidden group-hover:inline">Logout</span>
             </li>
@@ -66,135 +111,133 @@ const page = () => {
         </div>
       </div>
 
-      {/* wrap left */}
-
-      {/* wrap-right */}
+      {/* Main Dashboard */}
       <div className="wrap-right sm:h-screen flex-1">
         <DashNavbar openSlider={openSlider} setOpenSlider={setOpenSlider} />
         <Slider open={openSlider} setOpen={setOpenSlider} />
 
         <div className="main mx-6 mt-16 sm:mt-0 sm:mx-0">
+          {/* Top Header */}
           <div className="sm:hidden header flex items-center justify-center">
-            <h1 className="mt-6 text-gray-600 text-center font-semibold md:text-md text-lg lg:text-xl">
+            <h1 className="mt-6 text-gray-600 text-center font-semibold text-lg lg:text-xl">
               GCTU Clearance System
             </h1>
           </div>
-          {/* larger screens */}
-          <div className="hidden header sm:flex items-center justify-center items-center mx-16 md:mx-38 xl:mx-30 mt-2">
-            <h1 className="w-[88%] text-gray-600 text-center font-semibold  md:text-md text-2xl lg:text-xl">
+
+          {/* Header for Large Screens */}
+          <div className="hidden sm:flex items-center justify-center mx-16 mt-2">
+            <h1 className="w-[88%] text-gray-600 text-center font-semibold text-2xl lg:text-xl">
               GCTU Clearance System
             </h1>
-
-              <div className="hidden profile-container text-gray-400 sm:flex mt-2  items-center">
+            <div className="hidden sm:flex text-gray-400 mt-2 items-center">
               <Image
                 src="/user male.png"
                 height={736}
                 width={736}
                 alt="user profile"
-                className="w-22 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
+                className="w-12 bg-gray-300 p-2 rounded-full"
               />
               <div className="ml-2">
-
-              <h3 className="font-semibold text-lg sm:text-sm ">
-                Kwame Ewudzie
-              </h3>
-              <p className="text-[10px] sm:text-[8px]">4231230038@live.gctu.edu.gh</p>
+                <h3 className="font-semibold text-sm">
+                  {studentData?.name || "Loading..."}
+                </h3>
+                <p className="text-[8px]">{studentData?.email}</p>
               </div>
             </div>
           </div>
-          {/* student info section */}
+
+          {/* Student Info Section */}
           <div className="info-container flex flex-col sm:mx-10 sm:mb-10 mt-12">
-            <div className="sm:hidden profile-container  text-gray-400 flex flex-col items-center justify-center mt-10  flex-1">
+            <div className="sm:hidden flex flex-col items-center mt-10 text-gray-400">
               <Image
                 src="/user male.png"
                 height={736}
                 width={736}
                 alt="user profile"
-                className="w-22 sm:w-28 bg-gray-300 p-3 rounded-[50%]"
+                className="w-28 bg-gray-300 p-3 rounded-full"
               />
               <h3 className="font-semibold text-lg md:text-2xl">
-                Kwame Ewudzie
+                {studentData?.name || "Loading..."}
               </h3>
-              <p className="text-[10px] md:texl">4231230038@live.gctu.edu.gh</p>
+              <p className="text-[10px]">{studentData?.email}</p>
             </div>
 
-            <div className="md:mx-20 p-4 py-6 mb-6 info2 bg-[#ffffff]  text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
+            <div className="md:mx-20 p-4 py-6 mb-6 bg-white text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
               <ul className="space-y-6">
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Faculty:</span>{" "}
-                  <span className="text-black-200 font-medium float-end  text-right">
-                    Faculty Of Computing And Information Systems
+                <li className="flex justify-between">
+                  <span className="font-bold">Faculty:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.faculty}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Department:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    Computer Science
+                <li className="flex justify-between">
+                  <span className="font-bold">Department:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.department}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Programme:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    BSc. Computer Science
+                <li className="flex justify-between">
+                  <span className="font-bold">Programme:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.programme}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Level:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    400
+                <li className="flex justify-between">
+                  <span className="font-bold">Level:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.level}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Session:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    Morning
+                <li className="flex justify-between">
+                  <span className="font-bold">Session:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.session}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Index Number:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    4231230038
+                <li className="flex justify-between">
+                  <span className="font-bold">Index Number:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.indexNumber}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Campus:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    Accra
+                <li className="flex justify-between">
+                  <span className="font-bold">Campus:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.campus}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Mobile Number:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    0242049602
+                <li className="flex justify-between">
+                  <span className="font-bold">Mobile Number:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.mobileNumber}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Cohort:</span>{" "}
-                  <span className=" text-black-200 font-medium float-end ">
-                    2021/2022
+                <li className="flex justify-between">
+                  <span className="font-bold">Cohort:</span>
+                  <span className="text-black-200 font-medium">
+                    {studentData?.cohort}
                   </span>
                 </li>
-                <li className="flex items-end justify-between ">
-                  <span className="font-bold">Clearance Status:</span>{" "}
-                  <span className="text-gray-300 font-medium float-end ">
-                    Not Requested
+                <li className="flex justify-between">
+                  <span className="font-bold">Clearance Status:</span>
+                  <span className="text-gray-300 font-medium">
+                    {studentData?.clearaneStatus || "Not Requested"}
                   </span>
                 </li>
-                <Link href='student-profile/clearance'>
-                <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition transform duration-300 hover:scale-105">
-                  Request Clearance
-                </button>
+                <Link href="student-profile/clearance">
+                  <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105">
+                    Request Clearance
+                  </button>
                 </Link>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* wrap-right */}
-        <Footer/>
+        <Footer />
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState} from "react";
 import Image from "next/image";
 import { EyeClosed } from "lucide-react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ const Page = () => {
       });
 
       const data = response.data;
-
+      
       // Store token and student data
       localStorage.setItem("token", data.token);
       localStorage.setItem("student", JSON.stringify(data.student));
@@ -49,6 +49,7 @@ const Page = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div>

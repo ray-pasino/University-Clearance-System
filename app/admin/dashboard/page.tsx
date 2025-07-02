@@ -1,8 +1,17 @@
-import React from 'react'
+"use client"
+import React,{useEffect} from 'react'
 import Image from "next/image";
-
+import { useRouter } from 'next/navigation';
 
 const page = () => {
+  const router = useRouter()
+
+  useEffect(()=>{
+   const token = localStorage.getItem("token")
+   if(!token){
+    router.push("/")
+   }
+  })
   return (
     <div className="min-h-screen bg-gray-50 p-6 pt-0">
     {/* Header */}
