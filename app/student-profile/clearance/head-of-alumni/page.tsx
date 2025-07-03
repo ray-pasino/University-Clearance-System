@@ -1,15 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
 import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   // state for slider
   const [openSlider, setOpenSlider] = useState<boolean>(false);
+
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+  }, []);
 
   return (
     <>
@@ -18,7 +28,7 @@ const page = () => {
         <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
           <div className="head flex flex-col  w-full">
             <div className="border-b-1 border-gray-200 py-4">
-              <Link href="/">
+              <Link href="/student-profile">
                 <Image
                   src="/logo.png"
                   alt="GCTU Logo"
@@ -32,23 +42,38 @@ const page = () => {
             {/* slider body */}
             <div className="mt-4 flex-1 w-full">
               <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FilePlus size={22} />
-                  <span className="hidden group-hover:inline">
-                    Request Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FilePlus size={22} />
+                    <span className="hidden group-hover:inline">
+                      Request Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileSearch size={22} />
-                  <span className="hidden group-hover:inline">
-                    View Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileSearch size={22} />
+                    <span className="hidden group-hover:inline">
+                      View Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileX size={22} />
-                  <span className="hidden group-hover:inline">
-                    Cancel Clearance
-                  </span>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileX size={22} />
+                    <span className="hidden group-hover:inline">
+                      Cancel Clearance
+                    </span>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -59,7 +84,13 @@ const page = () => {
                 <ShieldCheck size={22} />
                 <span className="hidden group-hover:inline">Settings</span>
               </li>
-              <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+              <li
+                className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  router.push("/");
+                }}
+              >
                 <LogOut size={22} />
                 <span className="hidden group-hover:inline">Logout</span>
               </li>

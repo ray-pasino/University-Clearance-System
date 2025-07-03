@@ -5,8 +5,8 @@ const departmentClearanceSchema = new mongoose.Schema({
   name: { type: String, required: true },
   status: {
     type: String,
-    enum: ["Pending", "Approved", "Declined"],
-    default: "Pending",
+    enum: ["Pending", "Approved", "Declined", "Not Requested"],
+    default: "Not Requested",
   },
   updatedAt: { type: Date },
 });

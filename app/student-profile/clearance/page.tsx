@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
@@ -7,6 +7,9 @@ import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const page = () => {
   // state for slider
@@ -28,13 +31,77 @@ const page = () => {
   const handleClearDean = () => setClearDean(!clearDean);
 
   const router = useRouter();
-    useEffect(() => {
+  // fuction for clearance request
+
+  const requestClearance = async (department: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("You must be logged in to request clearance.");
+
+    try {
+      const response = await axios.post(
+        "/api/student/studentclearnace",
+        { department },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Axios response:", response);
+      toast.success(response.data.message, {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } catch (error: any) {
+      console.error("Clearance error:", error);
+      if (error.response) {
+        toast.error(error.response.data.error || error.response.data.message, {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      } else {
+        toast.error("An error occurred while requesting clearance.", {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      }
+    }
+  };
+
+  //function for clearance request
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/");
       return;
     }
   }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logging out ...", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      router.push("/");
+    }, 1000); // Redirect after 3 seconds
+  };
   return (
     <>
       {/* confirmation modal  */}
@@ -55,7 +122,13 @@ const page = () => {
           Do You Want To Initiate Clearance For Finance?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/finance">
-              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance("Finance");
+                  setClearFinanace(false); // Close the modal
+                }}
+              >
                 Yes
               </button>
             </Link>
@@ -86,7 +159,13 @@ const page = () => {
           Do You Want To Initiate Clearance For Library?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/library">
-              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance("Library");
+                  setClearFinanace(false); // Close the modal
+                }}
+              >
                 Yes
               </button>
             </Link>
@@ -116,7 +195,13 @@ const page = () => {
           Do You Want To Initiate Clearance For Faculty?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/faculty">
-              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance("Faculty");
+                  setClearFinanace(false); // Close the modal
+                }}
+              >
                 Yes
               </button>
             </Link>
@@ -176,7 +261,13 @@ const page = () => {
           Do You Want To Initiate Clearance For Head of Departments?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/hod">
-              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance("Head of Departments");
+                  setClearFinanace(false); // Close the modal
+                }}
+              >
                 Yes
               </button>
             </Link>
@@ -206,7 +297,13 @@ const page = () => {
           Do You Want To Initiate Clearance For Dean of Student Affairs?
           <div className="buttons flex space-x-4 mt-4 sm:mt-8">
             <Link href="/student-profile/clearance/dean-of-student-affairs">
-              <button className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance("Dean of Student Affairs");
+                  setClearFinanace(false); // Close the modal
+                }}
+              >
                 Yes
               </button>
             </Link>
@@ -227,7 +324,7 @@ const page = () => {
         <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
           <div className="head flex flex-col  w-full">
             <div className="border-b-1 border-gray-200 py-4">
-              <Link href="/">
+              <Link href="/student-profile">
                 <Image
                   src="/logo.png"
                   alt="GCTU Logo"
@@ -243,7 +340,7 @@ const page = () => {
               <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
                 <li>
                   <Link
-                    href="student-profile/clearance"
+                    href="/student-profile/clearance"
                     className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
                   >
                     <FilePlus size={22} />
@@ -254,7 +351,7 @@ const page = () => {
                 </li>
                 <li>
                   <Link
-                    href="student-profile/clearance"
+                    href="/student-profile/clearance"
                     className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
                   >
                     <FileSearch size={22} />
@@ -265,7 +362,7 @@ const page = () => {
                 </li>
                 <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
                   <Link
-                    href="student-profile/clearance"
+                    href="/student-profile/clearance"
                     className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
                   >
                     <FileX size={22} />
@@ -287,10 +384,7 @@ const page = () => {
                 <LogOut size={22} />
                 <span
                   className="hidden group-hover:inline"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    router.push("/");
-                  }}
+                  onClick={handleLogout}
                 >
                   Logout
                 </span>
@@ -556,6 +650,7 @@ const page = () => {
           {/* wrap-right */}
           <Footer />
         </div>
+        <ToastContainer />
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { EyeClosed } from "lucide-react";
 import Link from "next/link";
@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Page = () => {
   const router = useRouter();
@@ -14,7 +16,6 @@ const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [seeAdminPassword, setSeeAdminPassword] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const handlePasswordVisibility = () => {
@@ -23,7 +24,6 @@ const Page = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     try {
       const response = await axios.post("/api/auth/student", {
@@ -32,28 +32,48 @@ const Page = () => {
       });
 
       const data = response.data;
-      
+
       // Store token and student data
       localStorage.setItem("token", data.token);
       localStorage.setItem("student", JSON.stringify(data.student));
 
-      // Redirect on success
-      router.push("/student-profile");
+      // Show success notification
+      toast.success("Login successful!", {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+
+      // Redirect after giving user time to read the message
+      setTimeout(() => {
+        router.push("/student-profile");
+      }, 2000);
     } catch (err: any) {
-      if (err.response && err.response.data?.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } finally {
       setLoading(false);
+      const errorMessage = err.response && err.response.data?.error
+        ? err.response.data.error
+        : "Something went wrong. Please try again.";
+
+      // Show error notification
+      toast.error(errorMessage, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
     }
   };
 
-
   return (
-    <div>
-      <Link href="/">
+    <div className="min-h-screen flex flex-col">
+      <Link href="/" className="text-center py-4">
         <div className="flex sm:space-x-2 items-center justify-center">
           <Image
             src="/logo.png"
@@ -66,25 +86,25 @@ const Page = () => {
         </div>
       </Link>
 
-      <div className="flex flex-col items-center justify-center">
-        <h3 className="my-8 font-semibold text-2xl md:text-4xl">
+      <div className="flex-grow flex flex-col items-center justify-center px-4">
+        <h3 className="mb-8 font-semibold text-2xl md:text-4xl text-center">
           Student Sign In
         </h3>
 
         <Image
           src="/signin.svg"
-          alt="sign in svg"
+          alt="sign in illustration"
           width={500}
           height={500}
-          className="w-screen sm:h-72"
+          className="w-full max-w-md"
         />
 
         <form
           onSubmit={handleLogin}
-          className="mt-6 mb-10 flex flex-col space-y-6 items-center justify-center"
+          className="mt-8 w-full max-w-md flex flex-col gap-6"
         >
           <input
-            className="outline-none w-58 sm:w-78 md:w-82 lg:w-86 text-center border-1 border-blue-600 rounded-md px-6 py-2"
+            className="w-full px-4 py-2 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
             type="email"
             placeholder="Email"
             value={email}
@@ -92,37 +112,40 @@ const Page = () => {
             required
           />
 
-          <div>
-            <span className="w-58 sm:w-78 md:w-82 lg:w-86 flex justify-center items-center border-1 border-blue-600 rounded-md">
-              <input
-                className="outline-none w-[90%] text-center px-6 py-2"
-                type={seeAdminPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+          <div className="relative">
+            <input
+              className="w-full px-4 py-2 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+              type={seeAdminPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-3"
+              onClick={handlePasswordVisibility}
+            >
               <EyeClosed
-                size={16}
-                className={`${
-                  seeAdminPassword ? "text-gray-400" : "text-black-800"
-                } cursor-pointer`}
-                onClick={handlePasswordVisibility}
+                size={18}
+                className={seeAdminPassword ? "text-gray-500" : "text-black"}
               />
-            </span>
-            <p className="text-sm text-blue-600 cursor-pointer">
+            </button>
+            <p className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer mt-2 text-right">
               Forgot password?
             </p>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
           <button
             type="submit"
-            className="flex justify-center cursor-pointer bg-blue-800 text-white w-58 sm:w-78 md:w-82 lg:w-86 rounded-lg px-6 py-2 transition transform duration-300 hover:scale-105"
+            className="w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
+            disabled={loading}
           >
             {loading ? (
-              <Loader2 className="animate-spin" size={20} />
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Signing in...
+              </>
             ) : (
               "Sign In"
             )}
@@ -131,6 +154,17 @@ const Page = () => {
       </div>
 
       <Footer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -18,29 +18,49 @@ export async function POST(request: Request) {
     const { department } = await request.json(); // e.g. { department: "Finance" }
 
     if (!department) {
-      return NextResponse.json({ error: "Department is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Department is required" },
+        { status: 400 }
+      );
     }
 
     // Check if the student already made a clearance request
     let existingRequest = await clearance_requests.findOne({ studentId });
 
     if (existingRequest) {
-      const departmentExists = existingRequest.departments.some(
+      const deptIndex = existingRequest.departments.findIndex(
         (d: any) => d.name === department
       );
 
-      if (departmentExists) {
-        return NextResponse.json(
-          { message: `You have already requested clearance from ${department}.` },
-          { status: 400 }
-        );
+      if (deptIndex !== -1) {
+        const currentStatus = existingRequest.departments[deptIndex].status;
+
+        if (currentStatus === "Not Requested") {
+          // ✅ Update status from "Not Requested" to "Pending"
+          existingRequest.departments[deptIndex].status = "Pending";
+          existingRequest.departments[deptIndex].updatedAt = new Date();
+        } else {
+          // If already requested and not "Not Requested", do not allow duplicate
+          return NextResponse.json(
+            {
+              message: `You have already requested clearance from ${department}.`,
+            },
+            { status: 400 }
+          );
+        }
+      } else {
+        // ✅ New department being added
+        existingRequest.departments.push({
+          name: department,
+          status: "Pending",
+        });
       }
 
-      // Add the new department to the existing request
-      existingRequest.departments.push({ name: department, status: "Pending" });
+      existingRequest.overallStatus = "Pending";
+      existingRequest.updatedAt = new Date();
       await existingRequest.save();
     } else {
-      // Create new request with the selected department
+      // ✅ Create new clearance request
       const newRequest = new clearance_requests({
         studentId,
         departments: [{ name: department, status: "Pending" }],

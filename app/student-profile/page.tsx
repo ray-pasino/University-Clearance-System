@@ -8,6 +8,8 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Page = () => {
   const [openSlider, setOpenSlider] = useState(false);
@@ -37,13 +39,24 @@ const Page = () => {
     fetchStudentData();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logging out ...", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      router.push("/");
+    }, 1000); // Redirect after 3 seconds
+  };
+
   return (
     <div className="sm:flex">
       {/* Sidebar */}
       <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
         <div className="head flex flex-col w-full">
           <div className="border-b-1 border-gray-200 py-4">
-            <Link href="/">
+            <Link href="/student-profile">
               <Image
                 src="/logo.png"
                 alt="GCTU Logo"
@@ -99,10 +112,7 @@ const Page = () => {
             </li>
             <li
               className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px]"
-              onClick={() => {
-                localStorage.removeItem("token")
-                router.push("/")
-              }}
+              onClick={handleLogout}
             >
               <LogOut size={22} />
               <span className="hidden group-hover:inline">Logout</span>
@@ -236,6 +246,7 @@ const Page = () => {
 
         <Footer />
       </div>
+      <ToastContainer />
     </div>
   );
 };

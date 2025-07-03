@@ -1,11 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
 import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const page = () => {
   // state for slider
@@ -14,8 +18,72 @@ const page = () => {
   // state for clearance status
 
   const [clearanceStatus, setClearanceStatus] = useState<
-    "Requested" | "Pending" | "Approved" | "Rejected"
-  >("Pending");
+    "Requested" | "Pending" | "Approved" | "Rejected" | "Not Requested"
+  >("Not Requested");
+
+  const router = useRouter();
+
+  const fetchStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "/api/student/studentclearnace/viewclearance",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = response.data.clearanceStatus;
+
+      // ✅ Get specific department (e.g., Finance) status
+      const financeDept = data.departments.find(
+        (department) => department.name === "Finance"
+      );
+
+      if (financeDept) {
+        const status =
+          financeDept.status.charAt(0).toUpperCase() +
+          financeDept.status.slice(1).toLowerCase();
+
+        setClearanceStatus(status);
+      } else {
+        setClearanceStatus("Not Requested");
+      }
+
+      // Optional: keep this if you need all departments elsewhere
+      const departmentStatuses = data.departments.map((department) => ({
+        name: department.name,
+        status: department.status,
+      }));
+
+      console.log("Department Statuses:", departmentStatuses);
+    } catch (err) {
+      console.error("Failed to fetch clearance status", err);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+
+    fetchStatus();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logging out ...", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      router.push("/");
+    }, 1000); // Redirect after 3 seconds
+  };
 
   return (
     <>
@@ -24,7 +92,7 @@ const page = () => {
         <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
           <div className="head flex flex-col  w-full">
             <div className="border-b-1 border-gray-200 py-4">
-              <Link href="/">
+              <Link href="/student-profile">
                 <Image
                   src="/logo.png"
                   alt="GCTU Logo"
@@ -38,23 +106,38 @@ const page = () => {
             {/* slider body */}
             <div className="mt-4 flex-1 w-full">
               <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FilePlus size={22} />
-                  <span className="hidden group-hover:inline">
-                    Request Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FilePlus size={22} />
+                    <span className="hidden group-hover:inline">
+                      Request Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileSearch size={22} />
-                  <span className="hidden group-hover:inline">
-                    View Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileSearch size={22} />
+                    <span className="hidden group-hover:inline">
+                      View Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileX size={22} />
-                  <span className="hidden group-hover:inline">
-                    Cancel Clearance
-                  </span>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileX size={22} />
+                    <span className="hidden group-hover:inline">
+                      Cancel Clearance
+                    </span>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -65,7 +148,10 @@ const page = () => {
                 <ShieldCheck size={22} />
                 <span className="hidden group-hover:inline">Settings</span>
               </li>
-              <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+              <li
+                className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out"
+                onClick={handleLogout}
+              >
                 <LogOut size={22} />
                 <span className="hidden group-hover:inline">Logout</span>
               </li>
@@ -211,7 +297,52 @@ const page = () => {
                           {(clearanceStatus === "Requested" ||
                             clearanceStatus === "Pending") && (
                             <button
-                              onClick={() => setClearanceStatus("Rejected")}
+                              onClick={async () => {
+                                try {
+                                  const token = localStorage.getItem("token");
+                                  if (!token) {
+                                    router.push("/");
+                                    return;
+                                  }
+
+                                  const response = await axios.post(
+                                    "/api/student/studentclearnace/cancelclearance",
+                                    { department: "Finance" },
+                                    {
+                                      headers: {
+                                        Authorization: `Bearer ${token}`,
+                                      },
+                                    }
+                                  );
+
+                                  console.log(
+                                    "Cancel success:",
+                                    response.data.message
+                                  );
+
+                                  toast.success(response.data.message, {
+                                    position: "bottom-right",
+                                    autoClose: 4000,
+                                    hideProgressBar: false,
+                                    closeOnClick: false,
+                                    pauseOnHover: true,
+                                    draggable: false,
+                                    progress: undefined,
+                                  });
+                                  await fetchStatus();
+                                } catch (error) {
+                                  console.error("Cancel failed:", error);
+                                  toast.error("Cancel failed", {
+                                    position: "bottom-right",
+                                    autoClose: 4000,
+                                    hideProgressBar: false,
+                                    closeOnClick: false,
+                                    pauseOnHover: true,
+                                    draggable: false,
+                                    progress: undefined,
+                                  });
+                                }
+                              }}
                               className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-red-100 inline-block px-3 py-1 rounded-full font-semibold text-xs transition-all duration-200"
                             >
                               <span className="sm:hidden">Cancel</span>
@@ -232,6 +363,7 @@ const page = () => {
           {/* wrap-right */}
           <Footer />
         </div>
+        <ToastContainer />
       </div>
     </>
   );

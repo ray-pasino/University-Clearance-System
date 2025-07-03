@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
@@ -7,18 +7,83 @@ import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { studentGrades } from "@/lib/data";
-
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const page = () => {
   // state for slider
   const [openSlider, setOpenSlider] = useState<boolean>(false);
 
-   // state for clearance status
-      const [facultyclearanceStatus, setFacultyClearanceStatus] = useState<
-        "Requested" | "Pending" | "Approved" | "Rejected"
-      >("Pending");
+  // state for clearance status
+  const [facultyclearanceStatus, setFacultyClearanceStatus] = useState<
+    "Requested" | "Pending" | "Approved" | "Rejected" | "Not Requested"
+  >("Not Requested");
 
+  const router = useRouter();
 
+  const fetchStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "/api/student/studentclearnace/viewclearance",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = response.data.clearanceStatus;
+
+      // ✅ Get specific department (e.g., Finance) status
+      const financeDept = data.departments.find(
+        (department) => department.name === "Faculty"
+      );
+
+      if (financeDept) {
+        const status =
+          financeDept.status.charAt(0).toUpperCase() +
+          financeDept.status.slice(1).toLowerCase();
+
+        setFacultyClearanceStatus(status);
+      } else {
+        setFacultyClearanceStatus("Not Requested");
+      }
+
+      // Optional: keep this if you need all departments elsewhere
+      const departmentStatuses = data.departments.map((department) => ({
+        name: department.name,
+        status: department.status,
+      }));
+
+      console.log("Department Statuses:", departmentStatuses);
+    } catch (err) {
+      console.error("Failed to fetch clearance status", err);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+
+    fetchStatus();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logging out ...", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      router.push("/");
+    }, 1000); // Redirect after 3 seconds
+  };
   return (
     <>
       <div className="sm:flex">
@@ -26,7 +91,7 @@ const page = () => {
         <div className="wrap-left group hidden sm:fixed sm:flex top-0 left-0 h-screen w-[8%] lg:w-[6%] xl:w-[4.5%] bg-white rounded-r-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out z-50 shadow-md">
           <div className="head flex flex-col  w-full">
             <div className="border-b-1 border-gray-200 py-4">
-              <Link href="/">
+              <Link href="/student-profile">
                 <Image
                   src="/logo.png"
                   alt="GCTU Logo"
@@ -40,23 +105,38 @@ const page = () => {
             {/* slider body */}
             <div className="mt-4 flex-1 w-full">
               <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FilePlus size={22} />
-                  <span className="hidden group-hover:inline">
-                    Request Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FilePlus size={22} />
+                    <span className="hidden group-hover:inline">
+                      Request Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileSearch size={22} />
-                  <span className="hidden group-hover:inline">
-                    View Clearance
-                  </span>
+                <li>
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileSearch size={22} />
+                    <span className="hidden group-hover:inline">
+                      View Clearance
+                    </span>
+                  </Link>
                 </li>
-                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                  <FileX size={22} />
-                  <span className="hidden group-hover:inline">
-                    Cancel Clearance
-                  </span>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                  <Link
+                    href="/student-profile/clearance"
+                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
+                  >
+                    <FileX size={22} />
+                    <span className="hidden group-hover:inline">
+                      Cancel Clearance
+                    </span>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -67,7 +147,10 @@ const page = () => {
                 <ShieldCheck size={22} />
                 <span className="hidden group-hover:inline">Settings</span>
               </li>
-              <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+              <li
+                className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out"
+                onClick={handleLogout}
+              >
                 <LogOut size={22} />
                 <span className="hidden group-hover:inline">Logout</span>
               </li>
@@ -130,54 +213,74 @@ const page = () => {
                 </p>
               </div>
 
-           <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff] text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
-  <h2 className="mb-4">Faculty Clearance</h2>
-  <table className="min-w-full divide-y divide-gray-200 rounded-md overflow-hidden text-sm text-left">
-    <thead className="bg-gray-100 text-gray-500 uppercase tracking-wider">
-      <tr className="text-[12px]">
-        <th className="p-2">Course</th>
-        <th className="p-2">Grade</th>
-        <th className="p-2">GPA</th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-gray-200">
-      {studentGrades.map((year, yearIdx) => (
-        <React.Fragment key={yearIdx}>
-          {year.semesters.map((semester, semIdx) => {
-            // Calculate cumulative GPA
-            const cumulativeGPA = (year.semesters.slice(0, semIdx + 1).reduce((acc, curr) => acc + parseFloat(curr.gpa), 0) / (semIdx + 1)).toFixed(2);
-            
-            return (
-              <React.Fragment key={semIdx}>
-                <tr className="bg-gray-50">
-                  <td colSpan={3} className="py-3 px-2 font-bold text-indigo-400">
-                    {year.year} - {semester.name}
-                  </td>
-                </tr>
-                {semester.courses.map((course, courseIdx) => (
-                  <tr key={courseIdx}>
-                    <td className="py-3 px-2 text-[12px]">{course.course}</td>
-                    <td className="py-3 px-2 text-[12px]">{course.grade}</td>
-                    <td className="py-3 px-2 text-[12px]">{semester.gpa}</td>
-                  </tr>
-                ))}
-                {/* Row for Cumulative GPA */}
-                <tr className="bg-gray-50">
-                  <td colSpan={2} className="py-3 px-2 font-bold text-gray-600">
-                    Cumulative GPA:
-                  </td>
-                  <td className="py-3 px-2 text-[12px] font-bold text-indigo-400">
-                    {cumulativeGPA}
-                  </td>
-                </tr>
-              </React.Fragment>
-            );
-          })}
-        </React.Fragment>
-      ))}
-    </tbody>
+              <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff] text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
+                <h2 className="mb-4">Faculty Clearance</h2>
+                <table className="min-w-full divide-y divide-gray-200 rounded-md overflow-hidden text-sm text-left">
+                  <thead className="bg-gray-100 text-gray-500 uppercase tracking-wider">
+                    <tr className="text-[12px]">
+                      <th className="p-2">Course</th>
+                      <th className="p-2">Grade</th>
+                      <th className="p-2">GPA</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {studentGrades.map((year, yearIdx) => (
+                      <React.Fragment key={yearIdx}>
+                        {year.semesters.map((semester, semIdx) => {
+                          // Calculate cumulative GPA
+                          const cumulativeGPA = (
+                            year.semesters
+                              .slice(0, semIdx + 1)
+                              .reduce(
+                                (acc, curr) => acc + parseFloat(curr.gpa),
+                                0
+                              ) /
+                            (semIdx + 1)
+                          ).toFixed(2);
 
-      {/* Clearance Status Section */}
+                          return (
+                            <React.Fragment key={semIdx}>
+                              <tr className="bg-gray-50">
+                                <td
+                                  colSpan={3}
+                                  className="py-3 px-2 font-bold text-indigo-400"
+                                >
+                                  {year.year} - {semester.name}
+                                </td>
+                              </tr>
+                              {semester.courses.map((course, courseIdx) => (
+                                <tr key={courseIdx}>
+                                  <td className="py-3 px-2 text-[12px]">
+                                    {course.course}
+                                  </td>
+                                  <td className="py-3 px-2 text-[12px]">
+                                    {course.grade}
+                                  </td>
+                                  <td className="py-3 px-2 text-[12px]">
+                                    {semester.gpa}
+                                  </td>
+                                </tr>
+                              ))}
+                              {/* Row for Cumulative GPA */}
+                              <tr className="bg-gray-50">
+                                <td
+                                  colSpan={2}
+                                  className="py-3 px-2 font-bold text-gray-600"
+                                >
+                                  Cumulative GPA:
+                                </td>
+                                <td className="py-3 px-2 text-[12px] font-bold text-indigo-400">
+                                  {cumulativeGPA}
+                                </td>
+                              </tr>
+                            </React.Fragment>
+                          );
+                        })}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+
+                  {/* Clearance Status Section */}
                   <tfoot>
                     <tr>
                       <td colSpan="3" className="pt-6">
@@ -199,7 +302,52 @@ const page = () => {
                           {(facultyclearanceStatus === "Requested" ||
                             facultyclearanceStatus === "Pending") && (
                             <button
-                              onClick={() => setFacultyClearanceStatus("Rejected")}
+                              onClick={async () => {
+                                try {
+                                  const token = localStorage.getItem("token");
+                                  if (!token) {
+                                    router.push("/");
+                                    return;
+                                  }
+
+                                  const response = await axios.post(
+                                    "/api/student/studentclearnace/cancelclearance",
+                                    { department: "Faculty" },
+                                    {
+                                      headers: {
+                                        Authorization: `Bearer ${token}`,
+                                      },
+                                    }
+                                  );
+
+                                  console.log(
+                                    "Cancel success:",
+                                    response.data.message
+                                  );
+
+                                  toast.success(response.data.message, {
+                                    position: "bottom-right",
+                                    autoClose: 4000,
+                                    hideProgressBar: false,
+                                    closeOnClick: false,
+                                    pauseOnHover: true,
+                                    draggable: false,
+                                    progress: undefined,
+                                  });
+                                  await fetchStatus();
+                                } catch (error) {
+                                  console.error("Cancel failed:", error);
+                                  toast.error("Cancel failed", {
+                                    position: "bottom-right",
+                                    autoClose: 4000,
+                                    hideProgressBar: false,
+                                    closeOnClick: false,
+                                    pauseOnHover: true,
+                                    draggable: false,
+                                    progress: undefined,
+                                  });
+                                }
+                              }}
                               className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-red-100 inline-block px-3 py-1 rounded-full font-semibold text-xs transition-all duration-200"
                             >
                               <span className="sm:hidden">Cancel</span>
@@ -212,15 +360,15 @@ const page = () => {
                       </td>
                     </tr>
                   </tfoot>
-  </table>
-</div>
-
+                </table>
+              </div>
             </div>
           </div>
 
           {/* wrap-right */}
           <Footer />
         </div>
+        <ToastContainer />
       </div>
     </>
   );

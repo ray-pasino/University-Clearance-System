@@ -8,9 +8,10 @@ import {
   ShieldCheck,
   LogOut,
 } from "lucide-react";
-
-
-
+import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 interface Props {
   open: boolean;
@@ -18,7 +19,17 @@ interface Props {
 }
 
 const Slider = ({ open, setOpen }: Props) => {
-    
+  const router = useRouter()
+     const handleLogout = () => {
+        localStorage.removeItem("token");
+        toast.success("Logging out ...", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          router.push("/");
+        }, 1000); // Redirect after 3 seconds
+      };
   return (
     <>
       <div className={`sm:hidden gradient fixed z-10 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${!open ? 'hidden' : ''}`}  onClick={() => setOpen(false)}></div>
@@ -27,6 +38,7 @@ const Slider = ({ open, setOpen }: Props) => {
           className={`slider-container mx-2 h-full flex flex-col top-0 left-0 overflow-hidden`}
         >
           {/* slider head  */}
+          <Link href="/student-profile">
           <div className="flex justify-center items-center border-b-1 mx-2 border-gray-200">
             {/* logo */}
             <Image
@@ -35,9 +47,10 @@ const Slider = ({ open, setOpen }: Props) => {
               width={500}
               height={500}
               className="w-14 cursor-pointer mt-4 mb-4"
-            />
+              />
             
           </div>
+              </Link>
 
           {/* slider body  */}
           <div className="mt-4 ml-2 flex-1">
@@ -45,17 +58,23 @@ const Slider = ({ open, setOpen }: Props) => {
             <h4 className="text-sm text-blue-800 font-semibold mt-4">MENU</h4>
 
             <ul className="mt-8 space-y-10 text-[12px] font-semibold">
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
+              <li>
+                <Link href="/student-profile/clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
                 <FilePlus size={18} />
                 <span className="font-semibold">Request Clearance</span>
+                </Link>
               </li>
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
+              <li>
+                <Link href="/student-profile/clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
                 <FileSearch size={18} />
                 <span className="font-semibold">View Clearance</span>
+                </Link>
               </li>
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
+              <li>
+                <Link href="/student-profile/clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
                 <FileX size={18} />
                 <span className="font-semibold">Cancel Clearance</span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -71,13 +90,14 @@ const Slider = ({ open, setOpen }: Props) => {
               <ShieldCheck size={18} />
               <span className="font-semibold">Change Password</span>
             </li>
-            <li className="text-red-400 cursor-pointer flex items-center space-x-4">
+            <li className="text-red-400 cursor-pointer flex items-center space-x-4" onClick={handleLogout}>
               <LogOut size={18} />
               <span className="font-semibold">Logout</span>
             </li>
           </ul>
           {/* account settings */}
         </div>
+        <ToastContainer/>
       </div>
     </>
   );
