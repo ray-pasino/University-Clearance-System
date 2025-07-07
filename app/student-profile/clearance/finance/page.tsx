@@ -39,7 +39,7 @@ const page = () => {
 
       // ✅ Get specific department (e.g., Finance) status
       const financeDept = data.departments.find(
-        (department) => department.name === "Finance"
+        (department:{name:string; status:string;}) => department.name === "Finance"
       );
 
       if (financeDept) {
@@ -53,7 +53,7 @@ const page = () => {
       }
 
       // Optional: keep this if you need all departments elsewhere
-      const departmentStatuses = data.departments.map((department) => ({
+      const departmentStatuses = data.departments.map((department:{name:string; status:string;}) => ({
         name: department.name,
         status: department.status,
       }));
@@ -230,7 +230,7 @@ const page = () => {
                     {/* Academic Year 2021 / 2022 */}
                     <tr className="bg-gray-50">
                       <td
-                        colSpan="3"
+                        colSpan={3}
                         className="py-3 px-2 font-bold text-indigo-400"
                       >
                         Academic Year 2021 / 2022
@@ -245,7 +245,7 @@ const page = () => {
                     {/* Academic Year 2022 / 2023 */}
                     <tr className="bg-gray-50">
                       <td
-                        colSpan="3"
+                        colSpan={3}
                         className="py-3 px-2 font-bold text-indigo-400"
                       >
                         Academic Year 2022 / 2023
@@ -260,7 +260,7 @@ const page = () => {
                     {/* Academic Year 2023 / 2024 */}
                     <tr className="bg-gray-50">
                       <td
-                        colSpan="3"
+                        colSpan={3}
                         className="py-3 px-2 font-bold text-indigo-400"
                       >
                         Academic Year 2023 / 2024
@@ -278,7 +278,7 @@ const page = () => {
                   {/* Clearance Status Section */}
                   <tfoot>
                     <tr>
-                      <td colSpan="3" className="pt-6">
+                      <td colSpan={3} className="pt-6">
                         <div className="flex items-center space-x-4">
                           <span
                             className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ${

@@ -8,6 +8,6 @@ const adminSchema = new mongoose.Schema({
     password:{type:String}
 })
 
-const admin =  mongoose.models.adminSchema || mongoose.model("admin", adminSchema)
+const admin =  mongoose.models.admin || mongoose.model("admin", adminSchema)
 
 export default admin

@@ -34,7 +34,7 @@ const StudentClearancePage = () => {
       const data = response.data.clearanceStatus;
 
       const hodDept = data.departments.find(
-        (department) => department.name === "Head of Departments"
+        (department:{name:string; status:string}) => department.name === "Head of Departments"
       );
 
       if (hodDept) {

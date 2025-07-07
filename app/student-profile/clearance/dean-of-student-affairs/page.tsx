@@ -34,7 +34,7 @@ const StudentClearancePage = () => {
       const data = response.data.clearanceStatus;
 
       const deanDept = data.departments.find(
-        (department) => department.name === "Dean of Student Affairs"
+        (department:{name:string; status:string}) => department.name === "Dean of Student Affairs"
       );
 
       if (deanDept) {
