@@ -7,10 +7,13 @@ import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+
 
 const page = () => {
   // state for slider
   const [openSlider, setOpenSlider] = useState<boolean>(false);
+  const [studentData, setStudentData] = useState<any>(null);
 
   const router = useRouter();
   useEffect(() => {
@@ -19,6 +22,21 @@ const page = () => {
       router.push("/");
       return;
     }
+
+    const fetchStudentData = async () => {
+      try {
+        const res = await axios.get("/api/student/studentdata", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student data", err);
+      }
+    };
+
+    fetchStudentData();
   }, []);
 
   return (
@@ -127,10 +145,10 @@ const page = () => {
                 />
                 <div className="ml-2">
                   <h3 className="font-semibold text-lg sm:text-sm ">
-                    Kwame Ewudzie
+                   {studentData?.name || "Loading..."}
                   </h3>
                   <p className="text-[10px] sm:text-[8px]">
-                    4231230038@live.gctu.edu.gh
+                   {studentData?.email}
                   </p>
                 </div>
               </div>
@@ -146,10 +164,10 @@ const page = () => {
                   className="w-22 sm:w-28 bg-gray-300 p-3 rounded-[50%]"
                 />
                 <h3 className="font-semibold text-lg md:text-2xl">
-                  Kwame Ewudzie
+                  {studentData?.name || "Loading..."}
                 </h3>
                 <p className="text-[10px] md:texl">
-                  4231230038@live.gctu.edu.gh
+                  {studentData?.email}
                 </p>
               </div>
 

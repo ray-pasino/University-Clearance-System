@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 const page = () => {
   // state for slider
   const [openSlider, setOpenSlider] = useState<boolean>(false);
+  const [studentData, setStudentData] = useState<any>(null);
 
   // state for clearance status
   const [libraryclearanceStatus, setLibraryClearanceStatus] = useState<
@@ -38,7 +39,8 @@ const page = () => {
 
       // ✅ Get specific department (e.g., Finance) status
       const financeDept = data.departments.find(
-        (department:{name:string; status:string}) => department.name === "Library"
+        (department: { name: string; status: string }) =>
+          department.name === "Library"
       );
 
       if (financeDept) {
@@ -52,10 +54,12 @@ const page = () => {
       }
 
       // Optional: keep this if you need all departments elsewhere
-      const departmentStatuses = data.departments.map((department:{name:string; status:string}) => ({
-        name: department.name,
-        status: department.status,
-      }));
+      const departmentStatuses = data.departments.map(
+        (department: { name: string; status: string }) => ({
+          name: department.name,
+          status: department.status,
+        })
+      );
 
       console.log("Department Statuses:", departmentStatuses);
     } catch (err) {
@@ -69,6 +73,21 @@ const page = () => {
       router.push("/");
       return;
     }
+
+    const fetchStudentData = async () => {
+      try {
+        const res = await axios.get("/api/student/studentdata", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student data", err);
+      }
+    };
+
+    fetchStudentData();
 
     fetchStatus();
   }, []);
@@ -186,10 +205,10 @@ const page = () => {
                 />
                 <div className="ml-2">
                   <h3 className="font-semibold text-lg sm:text-sm ">
-                    Kwame Ewudzie
+                    {studentData?.name || "Loading..."}
                   </h3>
                   <p className="text-[10px] sm:text-[8px]">
-                    4231230038@live.gctu.edu.gh
+                    {studentData?.email}
                   </p>
                 </div>
               </div>
@@ -205,11 +224,9 @@ const page = () => {
                   className="w-22 sm:w-28 bg-gray-300 p-3 rounded-[50%]"
                 />
                 <h3 className="font-semibold text-lg md:text-2xl">
-                  Kwame Ewudzie
+                  {studentData?.name || "Loading..."}
                 </h3>
-                <p className="text-[10px] md:texl">
-                  4231230038@live.gctu.edu.gh
-                </p>
+                <p className="text-[10px] md:texl">{studentData?.email}</p>
               </div>
 
               <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff]  text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { LogOut, EyeClosed, Loader2 } from "lucide-react"; // Import Loader2
+import { LogOut, EyeClosed, Loader2 } from "lucide-react"; 
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

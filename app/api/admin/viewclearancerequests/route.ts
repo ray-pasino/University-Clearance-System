@@ -1,4 +1,3 @@
-// app/api/clearanceRequest/route.ts
 import connectionToDatabase from "@/lib/mongoDbConnection";
 import ClearanceRequest from "@/models/clearance_requests";
 import Student from "@/models/user_student"; 

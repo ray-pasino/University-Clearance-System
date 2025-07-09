@@ -37,23 +37,24 @@ export async function POST(request: Request) {
       throw new Error("JWT_SECRET is not defined in environment variables.");
     }
 
-    // Create JWT token
+    // ✅ Add the role: 'admin' to the JWT payload
     const token = jwt.sign(
       {
         id: existingAdmin._id,
         email: existingAdmin.email,
+        role: "admin", // ✅ This is the fix
       },
       JWT_SECRET,
-      { expiresIn: "7d" } // Token expires in 7 days
+      { expiresIn: "7d" }
     );
 
     // Return user data without password
-    const { password: _, ...studentData } = existingAdmin._doc;
+    const { password: _, ...adminData } = existingAdmin._doc;
 
     return NextResponse.json(
       {
         message: "Login successful",
-        student: studentData,
+        admin: adminData,
         token,
       },
       { status: 200 }

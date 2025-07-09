@@ -54,9 +54,10 @@ const Page = () => {
       }, 2000);
     } catch (err: any) {
       setLoading(false);
-      const errorMessage = err.response && err.response.data?.error
-        ? err.response.data.error
-        : "Something went wrong. Please try again.";
+      const errorMessage =
+        err.response && err.response.data?.error
+          ? err.response.data.error
+          : "Something went wrong. Please try again.";
 
       // Show error notification
       toast.error(errorMessage, {
@@ -138,13 +139,12 @@ const Page = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
+            className="cursor-pointer w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
             disabled={loading}
           >
             {loading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                Signing in...
               </>
             ) : (
               "Sign In"

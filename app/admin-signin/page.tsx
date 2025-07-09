@@ -32,7 +32,7 @@ const Page = () => {
     setError("");
     setLoading(true);
 
-    const endpoint = isToggled ? "/api/auth/superadmin" : "/api/auth/admin"
+    const endpoint = isToggled ? "/api/auth/superadmin" : "/api/auth/admin";
 
     try {
       const response = await axios.post(endpoint, {
@@ -41,10 +41,11 @@ const Page = () => {
       });
 
       const data = response.data;
+      console.log("here is the department",data.admin)
 
       // Store token and admin data
       localStorage.setItem("token", data.token);
-      localStorage.setItem("admin", JSON.stringify(data.student)); // You might rename this to `adminData`
+      localStorage.setItem("admin", JSON.stringify(data.admin)); // You might rename this to `adminData`
 
       // Show success notification
       toast.success("Login successful!", {
@@ -59,7 +60,30 @@ const Page = () => {
 
       // Redirect after giving user time to read the message
       setTimeout(() => {
-        router.push("/admin/dashboard");
+        if (isToggled) {
+          // Super admin
+          router.push("/admin/dashboard");
+        } else {
+          // Regular admin, redirect based on department
+          const department = data.admin?.department?.toLowerCase() || "";
+
+          if (department === "finance") {
+            router.push("/admin/finance");
+          } else if (department === "library") {
+            router.push("/admin/library");
+          } else if (department === "faculty") {
+            router.push("/admin/faculty");
+          } else if (department === "head of alumni relations") {
+            router.push("/admin/head-of-alumni");
+          } else if (department === "head of departments") {
+            router.push("/admin/hod");
+          } else if (department === "dean of student affairs") {
+            router.push("/admin/dean-of-student-affairs");
+          } else {
+            // fallback in case department is unknown
+            toast.error("Unknown department. Please contact admin.");
+          }
+        }
       }, 2000);
     } catch (err: any) {
       setLoading(false);
@@ -168,7 +192,6 @@ const Page = () => {
               {isToggled ? "Sign in as super admin" : "Sign in as super admin?"}
             </span>
           </div>
-
 
           {/* Login Button */}
           <button

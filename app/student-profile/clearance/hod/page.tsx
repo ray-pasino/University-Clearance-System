@@ -16,6 +16,7 @@ const StudentClearancePage = () => {
   const [clearanceStatus, setClearanceStatus] = useState<
     "Requested" | "Pending" | "Approved" | "Declined" | "Not Requested"
   >("Not Requested");
+  const [studentData, setStudentData] = useState<any>(null);
 
   const router = useRouter();
 
@@ -34,7 +35,8 @@ const StudentClearancePage = () => {
       const data = response.data.clearanceStatus;
 
       const hodDept = data.departments.find(
-        (department:{name:string; status:string}) => department.name === "Head of Departments"
+        (department: { name: string; status: string }) =>
+          department.name === "Head of Departments"
       );
 
       if (hodDept) {
@@ -119,6 +121,21 @@ const StudentClearancePage = () => {
       return;
     }
 
+    const fetchStudentData = async () => {
+      try {
+        const res = await axios.get("/api/student/studentdata", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStudentData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student data", err);
+      }
+    };
+
+    fetchStudentData();
+
     fetchStatus();
   }, []);
 
@@ -158,7 +175,9 @@ const StudentClearancePage = () => {
                     className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]"
                   >
                     <FilePlus size={22} />
-                    <span className="hidden group-hover:inline">Request Clearance</span>
+                    <span className="hidden group-hover:inline">
+                      Request Clearance
+                    </span>
                   </Link>
                 </li>
                 <li>
@@ -167,7 +186,9 @@ const StudentClearancePage = () => {
                     className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]"
                   >
                     <FileSearch size={22} />
-                    <span className="hidden group-hover:inline">View Clearance</span>
+                    <span className="hidden group-hover:inline">
+                      View Clearance
+                    </span>
                   </Link>
                 </li>
                 <li>
@@ -176,7 +197,9 @@ const StudentClearancePage = () => {
                     className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]"
                   >
                     <FileX size={22} />
-                    <span className="hidden group-hover:inline">Cancel Clearance</span>
+                    <span className="hidden group-hover:inline">
+                      Cancel Clearance
+                    </span>
                   </Link>
                 </li>
               </ul>
@@ -223,8 +246,12 @@ const StudentClearancePage = () => {
                   className="w-22 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
                 />
                 <div className="ml-2">
-                  <h3 className="font-semibold text-lg sm:text-sm">Kwame Ewudzie</h3>
-                  <p className="text-[10px] sm:text-[8px]">4231230038@live.gctu.edu.gh</p>
+                  <h3 className="font-semibold text-lg sm:text-sm">
+                      {studentData?.name || "Loading..."}
+                  </h3>
+                  <p className="text-[10px] sm:text-[8px]">
+                     {studentData?.email}
+                  </p>
                 </div>
               </div>
             </div>
@@ -236,7 +263,9 @@ const StudentClearancePage = () => {
 
                 {clearanceStatus === "Not Requested" && (
                   <>
-                    <p className="mt-4 text-gray-700">You have not requested clearance yet.</p>
+                    <p className="mt-4 text-gray-700">
+                      You have not requested clearance yet.
+                    </p>
                     <button
                       onClick={handleRequestClearance}
                       className="cursor-pointer mt-4 px-5 py-2 rounded-md bg-blue-800 text-white hover:bg-blue-700 transition duration-300"
@@ -246,9 +275,12 @@ const StudentClearancePage = () => {
                   </>
                 )}
 
-                {(clearanceStatus === "Requested" || clearanceStatus === "Pending") && (
+                {(clearanceStatus === "Requested" ||
+                  clearanceStatus === "Pending") && (
                   <div className="mt-4 flex flex-col space-y-4 text-yellow-700 font-semibold">
-                    <p>Your clearance request is {clearanceStatus.toLowerCase()}.</p>
+                    <p>
+                      Your clearance request is {clearanceStatus.toLowerCase()}.
+                    </p>
                     <button
                       onClick={handleCancelClearance}
                       className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-white inline-block px-4 py-2 rounded-md font-medium text-xs transition-all duration-200"
