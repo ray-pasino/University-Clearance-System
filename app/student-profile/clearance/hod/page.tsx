@@ -59,7 +59,7 @@ const StudentClearancePage = () => {
       if (!token) return;
 
       const res = await axios.post(
-        "/api/student/studentclearnace/requestclearance",
+        "/api/student/studentclearnace/",
         { department: "Head of Departments" },
         {
           headers: {

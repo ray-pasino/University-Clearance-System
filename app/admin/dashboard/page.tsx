@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { LogOut, EyeClosed, Loader2 } from "lucide-react"; 
+import { LogOut, EyeClosed, Loader2, Trash2 } from "lucide-react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,6 +35,7 @@ const Page = () => {
   const [adminCount, setAdminCount] = useState<number>(0);
   const [superAdminCount, setSuperAdminCount] = useState<number>(0);
   const [studentCount, setStudentCount] = useState(0);
+  const [alumniCount, setAlumniCount] = useState(0);
   const [clearedCount, setClearedCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [rejectedCount, setRejectedCount] = useState(0);
@@ -68,6 +69,15 @@ const Page = () => {
     cohort: "",
     password: "",
   });
+  const [showSuperAdminModal, setShowSuperAdminModal] =
+    useState<boolean>(false);
+  const [superAdmins, setSuperAdmins] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [showStudentsModal, setShowStudentsModal] = useState<boolean>(false);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [showAdminsModal, setShowAdminsModal] = useState<boolean>(false);
+  const [alumnis, setAlumnis] = useState<any[]>([]);
+  const [showAlumnisModal, setShowAlumnisModal] = useState<boolean>(false);
 
   const fetchAdminCounts = async () => {
     try {
@@ -89,6 +99,51 @@ const Page = () => {
       setStudentCount(response.data.count);
     } catch (error) {
       console.error("Error fetching student counts:", error);
+    }
+  };
+
+  const fetchAlumniCount = async () => {
+    try {
+      const response = await axios.get("/api/admin/countalumni");
+      setAlumniCount(response.data.count);
+    } catch (error) {
+      console.error("Error fetching alumni count:", error);
+    }
+  };
+
+  const fetchSuperAdmins = async () => {
+    try {
+      const response = await axios.get("/api/admin/listsuperadmins");
+      setSuperAdmins(response.data.data);
+    } catch (error) {
+      console.error("Error fetching super admins:", error);
+    }
+  };
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get("/api/admin/liststudents");
+      setStudents(response.data.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const response = await axios.get("/api/admin/listadmins");
+      setAdmins(response.data.data);
+    } catch (error) {
+      console.error("Error fetching admins:", error);
+    }
+  };
+
+  const fetchAlumnis = async () => {
+    try {
+      const response = await axios.get("/api/admin/listalumni");
+      setAlumnis(response.data.data);
+    } catch (error) {
+      console.error("Error fetching alumnis:", error);
     }
   };
 
@@ -154,11 +209,103 @@ const Page = () => {
     clearedStudentCounts();
     pendingStudentCounts();
     rejectedStudentCounts();
-    fetchClearanceRequests(); // Fetch clearance requests
+    fetchClearanceRequests();
+    fetchAlumniCount();
+    fetchSuperAdmins();
+    fetchStudents();
+    fetchAdmins();
+    fetchAlumnis();
   }, []);
 
   const handlePasswordVisibility = () => {
     setSeePassword(!seePassword);
+  };
+  const handleDeleteSuperAdmin = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/deletesuperadmin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Super admin deleted successfully!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      fetchSuperAdmins(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting super admin:", error);
+      toast.error("Failed to delete super admin.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleDeleteAdmin = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/deleteadmin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Admin deleted successfully!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      fetchAdmins(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+      toast.error("Failed to delete admin.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleDeleteStudent = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/deletestudent/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Student deleted successfully!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      fetchStudents(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      toast.error("Failed to delete student.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleDeleteAlumni = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/admin/deletealumni/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Alumni deleted successfully!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      fetchAlumnis(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting alumni:", error);
+      toast.error("Failed to delete alumni.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleLogout = () => {
@@ -287,7 +434,13 @@ const Page = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-        <div className="bg-white p-4 rounded-2xl shadow-md border-t-4 border-blue-500">
+        <div
+          className="cursor-pointer bg-white p-4 rounded-2xl shadow-md hover:shadow-lg border-t-4 border-blue-500"
+          onClick={() => {
+            fetchStudents();
+            setShowStudentsModal(true);
+          }}
+        >
           <h2 className="text-sm text-gray-500">Total Students</h2>
           <p className="text-2xl font-semibold text-blue-600">{studentCount}</p>
         </div>
@@ -307,15 +460,37 @@ const Page = () => {
           <h2 className="text-sm text-gray-500">Rejected Students</h2>
           <p className="text-2xl font-semibold text-red-600">{rejectedCount}</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl shadow-md border-t-4 border-purple-500">
+        <div
+          className="cursor-pointer bg-white p-4 rounded-2xl shadow-md hover:shadow-lg border-t-4 border-purple-500"
+          onClick={() => {
+            fetchAdmins();
+            setShowAdminsModal(true);
+          }}
+        >
           <h2 className="text-sm text-gray-500">Total Admins</h2>
           <p className="text-2xl font-semibold text-purple-600">{adminCount}</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl shadow-md border-t-4 border-indigo-500">
+        <div
+          className="cursor-pointer bg-white p-4 rounded-2xl shadow-md hover:shadow-lg border-t-4 border-indigo-500"
+          onClick={() => {
+            fetchSuperAdmins(); // Fetch super admins when opening the modal
+            setShowSuperAdminModal(true);
+          }}
+        >
           <h2 className="text-sm text-gray-500">Super Admins</h2>
           <p className="text-2xl font-semibold text-indigo-600">
             {superAdminCount}
           </p>
+        </div>
+        <div
+          className="cursor-pointer bg-white p-4 rounded-2xl shadow-md hover:shadow-lg border-t-4 border-pink-500"
+          onClick={() => {
+            fetchAlumnis();
+            setShowAlumnisModal(true);
+          }}
+        >
+          <h2 className="text-sm text-gray-500">Total Alumni</h2>
+          <p className="text-2xl font-semibold text-pink-600">{alumniCount}</p>
         </div>
       </div>
 
@@ -620,6 +795,162 @@ const Page = () => {
                 )}
               </button>
             </form>
+          </div>
+        </>
+      )}
+
+      {/* modal for viewing super admin */}
+
+      {showSuperAdminModal && (
+        <>
+          <div
+            className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-40 flex items-center justify-center"
+            onClick={() => setShowSuperAdminModal(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Super Admins</h2>
+            <ul>
+              {superAdmins.map((admin) => (
+                <li
+                  key={admin._id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div>
+                    <p className="font-semibold">{admin.name}</p>
+                    <p className="text-sm text-gray-500">{admin.email}</p>
+                  </div>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteSuperAdmin(admin._id)}
+                  >
+                    <Trash2 className="cursor-pointer" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+              onClick={() => setShowSuperAdminModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* modal for viewing students */}
+
+      {showStudentsModal && (
+        <>
+          <div
+            className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-40 flex items-center justify-center"
+            onClick={() => setShowStudentsModal(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Students</h2>
+            <ul>
+              {students.map((students) => (
+                <li
+                  key={students._id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div>
+                    <p className="font-semibold">{students.name}</p>
+                    <p className="text-sm text-gray-500">{students.email}</p>
+                  </div>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteStudent(students._id)}
+                  >
+                    <Trash2 className="cursor-pointer" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+              onClick={() => setShowStudentsModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* modal for viewing admins */}
+
+      {showAdminsModal && (
+        <>
+          <div
+            className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-40 flex items-center justify-center"
+            onClick={() => setShowAdminsModal(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Admins</h2>
+            <ul>
+              {admins.map((admins) => (
+                <li
+                  key={admins._id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div>
+                    <p className="font-semibold">{admins.name}</p>
+                    <p className="text-sm text-gray-500">{admins.email}</p>
+                  </div>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteAdmin(admins._id)}
+                  >
+                    <Trash2 className="cursor-pointer" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+              onClick={() => setShowAdminsModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* modal for viewing alumnis */}
+
+      {showAlumnisModal && (
+        <>
+          <div
+            className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-40 flex items-center justify-center"
+            onClick={() => setShowAlumnisModal(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Alumnis</h2>
+            <ul>
+              {alumnis.map((alumnis) => (
+                <li
+                  key={alumnis._id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div>
+                    <p className="font-semibold">{alumnis.name}</p>
+                    <p className="text-sm text-gray-500">{alumnis.email}</p>
+                  </div>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteAlumni(alumnis._id)}
+                  >
+                    <Trash2 className="cursor-pointer" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+              onClick={() => setShowAlumnisModal(false)}
+            >
+              Close
+            </button>
           </div>
         </>
       )}

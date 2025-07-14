@@ -99,7 +99,7 @@ const page = () => {
     });
     setTimeout(() => {
       router.push("/");
-    }, 1000); // Redirect after 3 seconds
+    }, 1000); 
   };
 
   return (

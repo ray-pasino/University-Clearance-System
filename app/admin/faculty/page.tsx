@@ -1,198 +1,313 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { CheckCircle, XCircle } from "lucide-react";
-
-type Semester = {
-  name: string;
-  gpa: string;
-  courses: { course: string; grade: string }[];
-};
-
-type AcademicYear = {
-  year: string;
-  semesters: Semester[];
-};
-
-type FacultyClearanceRequest = {
-  id: number;
-  studentName: string;
-  studentEmail: string;
-  grades: AcademicYear[];
-  status: "Requested" | "Pending" | "Approved" | "Rejected";
-};
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { CheckCircle, XCircle, LogOut } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Page = () => {
-  const [requests, setRequests] = useState<FacultyClearanceRequest[]>([
-    {
-      id: 1,
-      studentName: "Kwame Ewudzie",
-      studentEmail: "4231230038@live.gctu.edu.gh",
-      grades: [
-        {
-          year: "2021/2022",
-          semesters: [
-            {
-              name: "Semester 1",
-              gpa: "3.4",
-              courses: [
-                { course: "CS101", grade: "A" },
-                { course: "Math102", grade: "B+" },
-              ],
-            },
-            {
-              name: "Semester 2",
-              gpa: "3.6",
-              courses: [
-                { course: "CS201", grade: "A-" },
-                { course: "Math202", grade: "B" },
-              ],
-            },
-          ],
-        },
-      ],
-      status: "Requested",
-    },
-  ]);
+  const router = useRouter();
+  const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
+  const [adminData, setAdminData] = useState<any>(null);
+  const [requests, setRequests] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleAction = (id: number, decision: "Approved" | "Rejected") => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.id === id ? { ...req, status: decision } : req
-      )
-    );
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logging out ...", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      router.push("/");
+    }, 1000);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return router.push("/");
+
+    const fetchAdminData = async () => {
+      try {
+        const res = await axios.get("/api/admin/admindata", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAdminData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch admin data", err);
+      }
+    };
+
+    const fetchClearanceRequests = async () => {
+      try {
+        const res = await axios.get("/api/admin/viewclearancerequests", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRequests(res.data.data);
+      } catch (err) {
+        console.error("Error fetching clearance requests:", err);
+      }
+    };
+
+    fetchAdminData();
+    fetchClearanceRequests();
+  }, [router]);
+
+  const handleAction = async (
+    requestId: string,
+    decision: "Approved" | "Rejected"
+  ) => {
+    const token = localStorage.getItem("token");
+    if (!token) return toast.error("No token found");
+
+    const endpoint =
+      decision === "Approved"
+        ? "/api/admin/acceptclearancerequest"
+        : "/api/admin/rejectclearancerequests";
+
+    try {
+      const res = await axios.post(
+        endpoint,
+        {
+          requestId,
+          department: "Faculty",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(res.data.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+
+      setRequests((prev) =>
+        prev.map((req) =>
+          req._id === requestId
+            ? {
+                ...req,
+                departments: req.departments.map((dept: any) =>
+                  dept.name === "Faculty" ? { ...dept, status: decision } : dept
+                ),
+              }
+            : req
+        )
+      );
+    } catch (error: any) {
+      const errMsg =
+        error?.response?.data?.error || "Something went wrong. Try again.";
+      toast.error(errMsg, {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
-    <div className="mx-6 sm:mx-12 my-4">
-     <div className="flex-col">
-    
-    
-        <div className='flex flex-col sm:flex-row items-center justify-between'>
-    
-     
+    <div>
+      {/* Header */}
+      <div className="flex-col">
+        <div className="sm:px-12 flex flex-col sm:flex-row items-center justify-between">
           <div className="flex sm:space-x-2 items-center justify-center mb-4 sm:mb-12">
-            
-            {/* GCTU logo */}
             <Image
               src="/logo.png"
               alt="GCTU Logo"
               width={500}
               height={500}
               className="w-12"
-              />
-            {/* heading text  */}
+            />
             <h1 className="font-semibold md:text-md">GCTU Clearance System</h1>
-              
-    
-          </div>
-    
-        <div className="cursor-pointer profile-container text-gray-400 sm:flex mt-2  items-center  mb-4 sm:mb-12">
-                    <Image
-                      src="/user male.png"
-                      height={736}
-                      width={736}
-                      alt="user profile"
-                      className="w-22 ms-8 sm:ms-0 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
-                    />
-                    <div className="ml-2">
-      
-                    <h3 className="font-semibold text-lg sm:text-sm ">
-                      Fafali Zokah
-                    </h3>
-                    <p className="text-[10px] sm:text-[8px]">4231230038@live.gctu.edu.gh</p>
-                    </div>
-                  </div>
-    
-          </div>
-    
           </div>
 
-      <h2 className="text-md font-bold mb-4 text-gray-700 font-semibold pl-2">
+          <div
+            className="cursor-pointer profile-container text-gray-400 sm:flex mt-2 items-center mb-4 sm:mb-12"
+            onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
+          >
+            <Image
+              src="/user male.png"
+              height={736}
+              width={736}
+              alt="user profile"
+              className="w-22 ms-8 sm:ms-0 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
+            />
+            <div className="ml-2">
+              <h3 className="font-semibold text-lg sm:text-sm">
+                {adminData?.name || "Loading..."}
+              </h3>
+              <p className="text-[10px] sm:text-[8px]">
+                {adminData?.email || ""}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {showLogoutDropdown && (
+          <div className="absolute right-8 mt-[-42px] w-40 bg-red-200 hover:bg-red-100 rounded-md shadow-lg z-10">
+            <button
+              className="cursor-pointer flex items-center block w-full text-left px-4 py-2 text-sm text-red-400"
+              onClick={handleLogout}
+            >
+              <LogOut size={12} className="mr-2" />
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Requests Section */}
+      <h2 className="pl-12 sm:mb-4 md:text-lg text-gray-700 font-semibold">
         Faculty Clearance Requests
       </h2>
 
-      {requests.length === 0 ? (
-        <p className="text-gray-500">No requests at the moment.</p>
-      ) : (
-        requests.map((req) => (
-          <div key={req.id} className="mb-10 bg-white p-4 rounded-lg shadow">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="font-bold text-sm text-gray-700">
-                  {req.studentName}
-                </h3>
-                <p className="text-xs text-gray-500">{req.studentEmail}</p>
-              </div>
-              <span
-                className={`px-3 py-1 rounded-full font-semibold text-xs ${
-                  req.status === "Requested"
-                    ? "bg-blue-100 text-blue-700"
-                    : req.status === "Pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : req.status === "Approved"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {req.status}
-              </span>
-            </div>
+      <div className="mx-10 p-4 py-6 sm:py-10 mb-6 bg-white text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
+        {(() => {
+          const facultyRequests = requests.filter((req) =>
+            req.departments.some((dept: any) => dept.name === "Faculty")
+          );
 
-            <div className="overflow-x-auto text-[12px]">
-              {req.grades.map((year, yIdx) => (
-                <div key={yIdx} className="mb-4">
-                  {year.semesters.map((sem, sIdx) => (
-                    <div key={sIdx}>
-                      <h4 className="font-semibold text-indigo-500 mb-1">
-                        {year.year} - {sem.name}
-                      </h4>
-                      <table className="min-w-full mb-3 text-left border">
-                        <thead className="bg-gray-100 text-gray-600">
-                          <tr>
-                            <th className="p-2">Course</th>
-                            <th className="p-2">Grade</th>
-                            <th className="p-2">GPA</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sem.courses.map((course, cIdx) => (
-                            <tr key={cIdx} className="border-t">
-                              <td className="p-2">{course.course}</td>
-                              <td className="p-2">{course.grade}</td>
-                              <td className="p-2">{sem.gpa}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ))}
+          if (facultyRequests.length === 0) {
+            return (
+              <p className="text-gray-500 mt-4">No requests at this time.</p>
+            );
+          }
+
+          return facultyRequests.map((req) => {
+            const facultyDept = req.departments.find(
+              (dept: any) => dept.name === "Library"
+            );
+            return (
+              <div key={req._id} className="mb-10">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+                  <div>
+                    <h3 className="text-[12px] sm:text-[14px] font-bold text-gray-700">
+                      {req.studentId?.name || "Unknown Student"}
+                    </h3>
+                    <p className="text-[10px] sm:text-[12px] text-gray-500">
+                      Clearance ID: {req.studentId?._id || "N/A"}
+                    </p>
+                    <p className="text-[10px] sm:text-[12px] text-gray-500">
+                      Requested On:{" "}
+                      {new Date(req.requestedAt).toLocaleDateString("en-GB")}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ${
+                      facultyDept?.status === "Requested"
+                        ? "bg-blue-100 text-blue-700"
+                        : facultyDept?.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : facultyDept?.status === "Approved"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {facultyDept?.status}
+                  </span>
                 </div>
-              ))}
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                  >
+                    View Library History
+                  </button>
+
+                  <button
+                    onClick={() => handleAction(req._id, "Approved")}
+                    className="cursor-pointer bg-green-100 text-green-700 hover:bg-green-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                  >
+                    <CheckCircle size={14} />
+                    Accept Request
+                  </button>
+
+                  <button
+                    onClick={() => handleAction(req._id, "Rejected")}
+                    className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                  >
+                    <XCircle size={14} />
+                    Cancel Request
+                  </button>
+                </div>
+              </div>
+            );
+          });
+        })()}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-40 flex items-center justify-center"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-md shadow-lg p-6 w-[90%] max-w-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+              Faculty History
+            </h3>
+            <div className="max-h-[400px] overflow-y-auto">
+              <table className="min-w-full divide-y divide-gray-200 rounded-md overflow-hidden text-sm text-left">
+                <thead className="bg-gray-100 text-gray-500 uppercase tracking-wider">
+                  <tr className="text-[12px]">
+                    <th className="p-2">Course</th>
+                    <th className="p-2">Grade</th>
+                    <th className="p-2">GPA</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {/* Level 100 */}
+                  <tr className="bg-gray-50">
+                    <td
+                      colSpan={3}
+                      className="py-3 px-2 font-bold text-indigo-400"
+                    >
+                      Level 100 (2021 / 2022) - Semester 1
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2">Introduction to Computer Science</td>
+                    <td className="p-2">A</td>
+                    <td className="p-2">3.75</td>
+                  </tr>
+                  {/* Add other rows here... */}
+                  <tr className="bg-gray-50">
+                    <td
+                      colSpan={2}
+                      className="py-3 px-2 font-bold text-gray-600"
+                    >
+                      Cumulative GPA:
+                    </td>
+                    <td className="py-3 px-2 font-bold text-indigo-400">
+                      3.75
+                    </td>
+                  </tr>
+                  {/* Continue with the rest of the content... */}
+                </tbody>
+              </table>
             </div>
 
-            {req.status === "Requested" && (
-              <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                <button
-                  onClick={() => handleAction(req.id, "Approved")}
-                  className="bg-green-100 text-green-700 hover:bg-green-600 hover:text-white px-3 py-1 rounded-full font-semibold text-xs transition"
-                >
-                  <CheckCircle size={14} className="inline mr-1" />
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleAction(req.id, "Rejected")}
-                  className="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white px-3 py-1 rounded-full font-semibold text-xs transition"
-                >
-                  <XCircle size={14} className="inline mr-1" />
-                  Reject
-                </button>
-              </div>
-            )}
+            <div className="mt-6 text-right">
+              <button
+                onClick={() => setShowModal(false)}
+                className="cursor-pointer bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-full text-xs font-medium"
+              >
+                Close
+              </button>
+            </div>
           </div>
-        ))
+        </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 };

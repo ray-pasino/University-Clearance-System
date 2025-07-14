@@ -182,7 +182,7 @@ const Page = () => {
                         {req.studentId?.name || "Unknown Student"}
                       </h3>
                       <p className="text-[10px] sm:text-[12px] text-gray-500">
-                        Email: {req.studentId?.email || "N/A"}
+                        Clearance ID: {req.studentId?._id || "N/A"}
                       </p>
                       <p className="text-[10px] sm:text-[12px] text-gray-500">
                         Requested On:{" "}

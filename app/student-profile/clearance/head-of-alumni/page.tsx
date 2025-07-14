@@ -3,19 +3,33 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut, Loader2 } from "lucide-react"; // Import Loader
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const page = () => {
   // state for slider
   const [openSlider, setOpenSlider] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    dob: "",
+    gender: "",
+    email: "",
+    country: "",
+    programme: "",
+    category: "",
+    intakeYear: "",
+    gradYear: "",
+  });
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
 
   const router = useRouter();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -38,6 +52,29 @@ const page = () => {
 
     fetchStudentData();
   }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); // Set loading to true
+    try {
+      const response = await axios.post("/api/student/alumni", formData);
+      toast.success(response.data.message);
+      // Optionally reset the form or redirect
+    } catch (error: any) {
+      if (error.response) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong. Try again.");
+      }
+    } finally {
+      setLoading(false); // Set loading to false after the request
+    }
+  };
 
   return (
     <>
@@ -174,7 +211,7 @@ const page = () => {
               <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff]  text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
                 <h2>Head of Alumni Clearance</h2>
 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <h3 className="text-lg font-semibold text-gray-700">
                     Undergraduate / Graduate Alumni Registration
                   </h3>
@@ -191,6 +228,8 @@ const page = () => {
                       id="name"
                       placeholder="John Doe"
                       required
+                      value={formData.name}
+                      onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                     />
                   </div>
@@ -198,14 +237,16 @@ const page = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label
-                        htmlFor="date"
+                        htmlFor="dob"
                         className="block mb-1 font-medium text-gray-600"
                       >
                         Date of Birth
                       </label>
                       <input
                         type="date"
-                        id="date"
+                        id="dob"
+                        value={formData.dob}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -221,6 +262,8 @@ const page = () => {
                         type="text"
                         id="gender"
                         placeholder="Male"
+                        value={formData.gender}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -238,6 +281,9 @@ const page = () => {
                         type="email"
                         id="email"
                         placeholder="johndoe@email.com"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -253,6 +299,8 @@ const page = () => {
                         type="text"
                         id="country"
                         placeholder="Ghana"
+                        value={formData.country}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -271,6 +319,9 @@ const page = () => {
                         type="text"
                         id="programme"
                         placeholder="BSc. Computer Science"
+                        required
+                        value={formData.programme}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -286,6 +337,8 @@ const page = () => {
                         type="text"
                         id="category"
                         placeholder="Undergraduate"
+                        value={formData.category}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -294,7 +347,7 @@ const page = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label
-                        htmlFor="intakeyear"
+                        htmlFor="intakeYear"
                         className="block mb-1 font-medium text-gray-600"
                       >
                         Year/Month of Intake{" "}
@@ -302,15 +355,18 @@ const page = () => {
                       </label>
                       <input
                         type="month"
-                        id="intakeyear"
+                        id="intakeYear"
                         placeholder="07-2022"
+                        required
+                        value={formData.intakeYear}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
 
                     <div>
                       <label
-                        htmlFor="gradyear"
+                        htmlFor="gradYear"
                         className="block mb-1 font-medium text-gray-600"
                       >
                         Year/Month of Graduation{" "}
@@ -318,8 +374,11 @@ const page = () => {
                       </label>
                       <input
                         type="month"
-                        id="gradyear"
+                        id="gradYear"
                         placeholder="08-2025"
+                        required
+                        value={formData.gradYear}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                       />
                     </div>
@@ -329,13 +388,15 @@ const page = () => {
                     <button
                       type="submit"
                       className="w-full cursor-pointer md:w-auto bg-blue-800 text-white font-semibold px-6 py-2 rounded-md transition transform duration-300 hover:scale-105"
+                      disabled={loading} // Disable button while loading
                     >
-                      Submit Registration
+                      {loading ? <Loader2 size={16} className="animate-spin" /> : "Submit Registration"}
                     </button>
                   </div>
                 </form>
               </div>
             </div>
+            <ToastContainer position="bottom-right" /> {/* Positioning toast notifications */}
           </div>
 
           {/* wrap-right */}
