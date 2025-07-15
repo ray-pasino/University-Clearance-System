@@ -78,6 +78,10 @@ const Page = () => {
   const [showAdminsModal, setShowAdminsModal] = useState<boolean>(false);
   const [alumnis, setAlumnis] = useState<any[]>([]);
   const [showAlumnisModal, setShowAlumnisModal] = useState<boolean>(false);
+  const [loadingStudents, setLoadingStudents] = useState<boolean>(false);
+  const [loadingAdmins, setLoadingAdmins] = useState<boolean>(false);
+  const [loadingSuperAdmins, setLoadingSuperAdmins] = useState<boolean>(false);
+  const [loadingAlumnis, setLoadingAlumnis] = useState<boolean>(false);
 
   const fetchAdminCounts = async () => {
     try {
@@ -111,39 +115,51 @@ const Page = () => {
     }
   };
 
-  const fetchSuperAdmins = async () => {
-    try {
-      const response = await axios.get("/api/admin/listsuperadmins");
-      setSuperAdmins(response.data.data);
-    } catch (error) {
-      console.error("Error fetching super admins:", error);
-    }
-  };
-
   const fetchStudents = async () => {
+    setLoadingStudents(true);
     try {
       const response = await axios.get("/api/admin/liststudents");
       setStudents(response.data.data);
     } catch (error) {
       console.error("Error fetching students:", error);
+    } finally {
+      setLoadingStudents(false);
     }
   };
 
   const fetchAdmins = async () => {
+    setLoadingAdmins(true);
     try {
       const response = await axios.get("/api/admin/listadmins");
       setAdmins(response.data.data);
     } catch (error) {
       console.error("Error fetching admins:", error);
+    } finally {
+      setLoadingAdmins(false);
+    }
+  };
+
+  const fetchSuperAdmins = async () => {
+    setLoadingSuperAdmins(true);
+    try {
+      const response = await axios.get("/api/admin/listsuperadmins");
+      setSuperAdmins(response.data.data);
+    } catch (error) {
+      console.error("Error fetching super admins:", error);
+    } finally {
+      setLoadingSuperAdmins(false);
     }
   };
 
   const fetchAlumnis = async () => {
+    setLoadingAlumnis(true);
     try {
       const response = await axios.get("/api/admin/listalumni");
       setAlumnis(response.data.data);
     } catch (error) {
       console.error("Error fetching alumnis:", error);
+    } finally {
+      setLoadingAlumnis(false);
     }
   };
 
@@ -809,6 +825,7 @@ const Page = () => {
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-4">Super Admins</h2>
+            {loadingSuperAdmins ? (<div className="text-center">Loading super admins...</div>):(
             <ul>
               {superAdmins.map((admin) => (
                 <li
@@ -828,6 +845,7 @@ const Page = () => {
                 </li>
               ))}
             </ul>
+            )}
             <button
               className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
               onClick={() => setShowSuperAdminModal(false)}
@@ -848,6 +866,7 @@ const Page = () => {
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-4">Students</h2>
+            {loadingStudents ? (<div className="text-center">Loading students...</div>): (
             <ul>
               {students.map((students) => (
                 <li
@@ -867,6 +886,7 @@ const Page = () => {
                 </li>
               ))}
             </ul>
+            )}
             <button
               className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
               onClick={() => setShowStudentsModal(false)}
@@ -887,6 +907,7 @@ const Page = () => {
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-4">Admins</h2>
+            { loadingAdmins ? (<div className="text-center">Loading admins...</div>):(
             <ul>
               {admins.map((admins) => (
                 <li
@@ -906,6 +927,7 @@ const Page = () => {
                 </li>
               ))}
             </ul>
+            )}
             <button
               className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
               onClick={() => setShowAdminsModal(false)}
@@ -926,6 +948,7 @@ const Page = () => {
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-4">Alumnis</h2>
+            {loadingAlumnis ? (<div className="text-center">Loading alumnis...</div>): (
             <ul>
               {alumnis.map((alumnis) => (
                 <li
@@ -945,6 +968,7 @@ const Page = () => {
                 </li>
               ))}
             </ul>
+            )}
             <button
               className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
               onClick={() => setShowAlumnisModal(false)}
