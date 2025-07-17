@@ -486,14 +486,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearFinance}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/finance">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 px-4 w-74 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>
@@ -518,14 +518,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearLibrary}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/library">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 px-4 w-74 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>
@@ -550,14 +550,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearFaculty}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/faculty">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 px-4 w-74 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>
@@ -582,14 +582,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearAlumni}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/head-of-alumni">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 px-4 w-74 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>
@@ -614,14 +614,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4  rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearHod}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/hod">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 px-4 w-74 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>
@@ -646,14 +646,14 @@ const page = () => {
                     </span>
                     {/* large screens */}
                     <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
+                      {/* <button
                         className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
                         onClick={handleClearDean}
                       >
                         Request Clearance
-                      </button>{" "}
+                      </button>{" "} */}
                       <Link href="/student-profile/clearance/dean-of-student-affairs">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
+                        <button className="bg-yellow-200 p-2 w-74 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
                           View Clearance
                         </button>
                       </Link>

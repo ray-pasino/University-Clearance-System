@@ -99,7 +99,7 @@ const page = () => {
     });
     setTimeout(() => {
       router.push("/");
-    }, 1000); 
+    }, 1000);
   };
 
   return (
@@ -136,7 +136,7 @@ const page = () => {
                 </li>
                 <li>
                   <Link
-                    href="/student-profile/clearance"
+                    href="/student-profile/view_clearance"
                     className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
                   >
                     <FileSearch size={22} />
@@ -161,10 +161,12 @@ const page = () => {
 
             {/* account settings */}
             <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                <ShieldCheck size={22} />
-                <span className="hidden group-hover:inline">Settings</span>
-              </li>
+              <Link href="/student-profile/settings">
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                  <ShieldCheck size={22} />
+                  <span className="hidden group-hover:inline">Settings</span>
+                </li>
+              </Link>
               <li
                 className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out"
                 onClick={handleLogout}
@@ -224,7 +226,7 @@ const page = () => {
                   className="w-22 sm:w-28 bg-gray-300 p-3 rounded-[50%]"
                 />
                 <h3 className="font-semibold text-lg md:text-2xl">
-                   {studentData?.name || "Loading..."}
+                  {studentData?.name || "Loading..."}
                 </h3>
                 <p className="text-[10px] md:texl">{studentData?.email}</p>
               </div>
@@ -233,7 +235,7 @@ const page = () => {
                 <h2 className="sm:mb-4 md:text-lg">Clear Finance</h2>
 
                 {/* data table  */}
-                <table className="min-w-full divide-y divide-gray-200  rounded-md overflow-hidden text-sm text-left">
+                <table className="min-w-full divide-y divide-gray-200 rounded-md overflow-hidden text-sm text-left">
                   <thead className="bg-gray-100 text-gray-500 uppercase tracking-wider">
                     <tr className="text-[12px]">
                       <th className="p-2">Fees</th>
@@ -286,9 +288,17 @@ const page = () => {
                       <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
                       <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
                     </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px] font-bold text-indigo-400">
+                        Graduation Fee
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 500</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 500</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
                   </tbody>
-
-                  {/* Clearance Status Section */}
 
                   {/* Clearance Status Section */}
                   <tfoot>

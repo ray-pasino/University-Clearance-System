@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div className='bottom-0 font-thin text-[#666] text-sm text-center'>
      <h3>GCTU STUDENT'S CLEARANCE SYSTEM</h3> 
-     <p>Copyright ©  2025 Software Unit</p>
+     <p>Copyright © 2025 AlFeDa</p>
     </div>
   )
 }

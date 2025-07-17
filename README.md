@@ -26,5 +26,8 @@ ADMIN
 password for all admins
 HopJogRun986!
 
+ADMINS 
+
+
 SUPER ADMIN USERNAME
 7893432243@live.gctu.edu.gh

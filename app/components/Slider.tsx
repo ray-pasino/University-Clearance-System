@@ -65,7 +65,7 @@ const Slider = ({ open, setOpen }: Props) => {
                 </Link>
               </li>
               <li>
-                <Link href="/student-profile/clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
+                <Link href="/student-profile/view_clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
                 <FileSearch size={18} />
                 <span className="font-semibold">View Clearance</span>
                 </Link>
@@ -85,11 +85,12 @@ const Slider = ({ open, setOpen }: Props) => {
             {/* title */}
             <h4 className="mt-6 text-sm text-blue-800 mb-8">SETTINGS</h4>
             {/* title */}
-
+            <Link href="/student-profile/settings">
             <li className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
               <ShieldCheck size={18} />
               <span className="font-semibold">Change Password</span>
             </li>
+            </Link>
             <li className="text-red-400 cursor-pointer flex items-center space-x-4" onClick={handleLogout}>
               <LogOut size={18} />
               <span className="font-semibold">Logout</span>

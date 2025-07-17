@@ -3,7 +3,14 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import {
+  FilePlus,
+  FileSearch,
+  FileX,
+  ShieldCheck,
+  LogOut,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -31,6 +38,68 @@ const page = () => {
   const handleClearDean = () => setClearDean(!clearDean);
 
   const [studentData, setStudentData] = useState<any>(null);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "/api/student/changepassword",
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(res.data.message || "Password changed successfully", {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Current password is incorrect",
+        {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const router = useRouter();
   // fuction for clearance request
@@ -394,11 +463,12 @@ const page = () => {
             {/* account settings */}
             <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
               <Link href="/student-profile/settings">
-              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
-                <ShieldCheck size={22} />
-                <span className="hidden group-hover:inline">Settings</span>
-              </li>
+                <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
+                  <ShieldCheck size={22} />
+                  <span className="hidden group-hover:inline">Settings</span>
+                </li>
               </Link>
+
               <li className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px] transition-all duration-00 ease-in-out">
                 <LogOut size={22} />
                 <span
@@ -466,200 +536,62 @@ const page = () => {
               </div>
 
               <div className="md:mx-20 p-4 py-6 sm:py-10 mb-6 info2 bg-[#ffffff]  text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
-                <ul className="space-y-6 sm:space-y-14">
-                  <li className="flex items-center justify-between">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Finance
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearFinance}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/finance">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearFinance}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/finance">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between ">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Library
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearLibrary}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/library">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearLibrary}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/library">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between ">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Faculty
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearFaculty}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/faculty">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearFaculty}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/faculty">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between ">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Head of Alumni Relations
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearAlumni}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/head-of-alumni">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearAlumni}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/head-of-alumni">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between ">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Head of Departmens
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearHod}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/hod">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4  rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearHod}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/hod">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between ">
-                    <span className="font-bold sm:text-lg sm:font-medium">
-                      Dean of Student Affairs
-                    </span>{" "}
-                    <span className="sm:hidden text-black-200 font-medium space-x-4">
-                      <button
-                        className="bg-blue-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearDean}
-                      >
-                        <FilePlus size={13} />
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/dean-of-student-affairs">
-                        <button className="bg-yellow-200 p-1 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          <FileSearch size={13} />
-                        </button>
-                      </Link>
-                    </span>
-                    {/* large screens */}
-                    <span className="hidden sm:flex text-black-200 font-medium space-x-8 lg:space-x-12">
-                      <button
-                        className="bg-blue-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300"
-                        onClick={handleClearDean}
-                      >
-                        Request Clearance
-                      </button>{" "}
-                      <Link href="/student-profile/clearance/dean-of-student-affairs">
-                        <button className="bg-yellow-200 p-2 px-4 rounded-md cursor-pointer hover:scale-105 transition transform duration-300">
-                          View Clearance
-                        </button>
-                      </Link>
-                    </span>
-                  </li>
-                </ul>
+                <h2 className="text-gray-700 font-bold mb-4 text-base sm:text-lg">
+                  Change Password
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block mb-1 text-gray-500 text-xs sm:text-sm">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      placeholder="Enter current password"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-500 text-xs sm:text-sm">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      placeholder="Enter new password"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-500 text-xs sm:text-sm">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="cursor-pointer w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
+                    disabled={isLoading}
+                    onClick={handleChangePassword}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="animate-spin" size={20} />
+                      </>
+                    ) : (
+                      "Change Password"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -181,7 +181,7 @@ const StudentClearancePage = () => {
                 </li>
                 <li>
                   <Link
-                    href="/student-profile/clearance"
+                    href="/student-profile/view_clearance"
                     className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]"
                   >
                     <FileSearch size={22} />
@@ -204,10 +204,12 @@ const StudentClearancePage = () => {
               </ul>
             </div>
             <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
+              <Link href="/student-profile/settings">
               <li className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]">
                 <ShieldCheck size={22} />
                 <span className="hidden group-hover:inline">Settings</span>
               </li>
+              </Link>
               <li
                 onClick={handleLogout}
                 className="text-red-400 flex items-center space-x-2 hover:bg-red-200 py-2 px-2 rounded-[12px] cursor-pointer"
