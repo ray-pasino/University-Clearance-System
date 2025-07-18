@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, ShieldCheck, LogOut, FileX } from "lucide-react";
+import { FilePlus, FileSearch, ShieldCheck, LogOut, FileX, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -302,6 +302,15 @@ const StudentClearancePage = () => {
                     Your clearance request was declined.
                   </div>
                 )}
+                <div className="flex mt-4 space-x-4">
+                  <Link href="/student-profile/clearance/hod">
+                    <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                      <ChevronLeft size={14} />
+                      <span>View Head of Departments</span>
+                    </span>
+                  </Link>
+                 
+                </div>
               </div>
             </div>
           </div>

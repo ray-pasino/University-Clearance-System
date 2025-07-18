@@ -24,19 +24,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Define the strict order of departments
+    // Define the strict order of departments, excluding "Head of Alumni Relations"
     const departmentOrder = [
       "Finance",
       "Library",
       "Faculty",
-      "Head of Alumni Relations",
       "Head of Departments",
       "Dean of Student Affairs",
     ];
 
     const requestedIndex = departmentOrder.indexOf(department);
 
-    if (requestedIndex === -1) {
+    // Allow "Head of Alumni Relations" to be requested at any time
+    const isAlumniDepartment = department === "Head of Alumni Relations";
+
+    if (requestedIndex === -1 && !isAlumniDepartment) {
       return NextResponse.json(
         { error: "Invalid department name." },
         { status: 400 }
@@ -46,20 +48,22 @@ export async function POST(request: Request) {
     let existingRequest = await clearance_requests.findOne({ studentId });
 
     if (existingRequest) {
-      // Ensure departments are in correct order
-      for (let i = 0; i < requestedIndex; i++) {
-        const prevDept = departmentOrder[i];
-        const prevDeptData = existingRequest.departments.find(
-          (d: any) => d.name === prevDept
-        );
-
-        if (!prevDeptData || prevDeptData.status !== "Approved") {
-          return NextResponse.json(
-            {
-              error: `You must complete clearance for ${prevDept} before proceeding to ${department}.`,
-            },
-            { status: 400 }
+      // Ensure departments are in correct order, except for "Head of Alumni Relations"
+      if (!isAlumniDepartment) {
+        for (let i = 0; i < requestedIndex; i++) {
+          const prevDept = departmentOrder[i];
+          const prevDeptData = existingRequest.departments.find(
+            (d: any) => d.name === prevDept
           );
+
+          if (!prevDeptData || prevDeptData.status !== "Approved") {
+            return NextResponse.json(
+              {
+                error: `You must complete clearance for ${prevDept} before proceeding to ${department}.`,
+              },
+              { status: 400 }
+            );
+          }
         }
       }
 
@@ -93,7 +97,7 @@ export async function POST(request: Request) {
       await existingRequest.save();
     } else {
       // Enforce that only the first department can be requested initially
-      if (requestedIndex !== 0) {
+      if (!isAlumniDepartment && requestedIndex !== 0) {
         return NextResponse.json(
           {
             error: `You must start clearance from ${departmentOrder[0]}.`,
@@ -127,4 +131,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

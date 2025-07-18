@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";

@@ -273,6 +273,16 @@ const Page = () => {
                       <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
                       <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
                     </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px] font-bold text-indigo-400">
+                        Graduation Fee
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 500</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 500</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
                   </React.Fragment>
                 ))}
               </tbody>

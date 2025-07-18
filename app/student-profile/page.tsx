@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Page = () => {
   const [openSlider, setOpenSlider] = useState(false);
   const [studentData, setStudentData] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,6 +49,13 @@ const Page = () => {
     setTimeout(() => {
       router.push("/");
     }, 1000); // Redirect after 3 seconds
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -107,10 +115,10 @@ const Page = () => {
 
           <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
             <Link href="/student-profile/settings">
-            <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
-              <ShieldCheck size={22} />
-              <span className="hidden group-hover:inline">Settings</span>
-            </li>
+              <li className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]">
+                <ShieldCheck size={22} />
+                <span className="hidden group-hover:inline">Settings</span>
+              </li>
             </Link>
             <li
               className="text-red-400 cursor-pointer flex items-center space-x-2 hover:bg-red-200 py-2 hover:px-2 rounded-[12px]"
@@ -236,11 +244,20 @@ const Page = () => {
                     {studentData?.clearaneStatus || "Not Requested"}
                   </span>
                 </li>
-                <Link href="student-profile/clearance">
-                  <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105">
-                    Request Clearance
+                {studentData?.clearaneStatus === "Accepted" ? (
+                  <button
+                    onClick={handleOpenModal}
+                    className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105"
+                  >
+                    View Certificate
                   </button>
-                </Link>
+                ) : (
+                  <Link href="student-profile/clearance">
+                    <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105">
+                      Request Clearance
+                    </button>
+                  </Link>
+                )}
               </ul>
             </div>
           </div>
@@ -248,6 +265,185 @@ const Page = () => {
 
         <Footer />
       </div>
+
+      {/* Modal for Viewing Certificate */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.85)] z-50 flex items-center justify-center p-4"
+          onClick={handleCloseModal}
+        >
+          <div
+            className=" bg-gradient-to-br from-blue-50 to-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden border border-blue-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Certificate Header */}
+            <div className="bg-blue-800 text-white p-2 text-center">
+              <div className="flex justify-between items-center">
+                <img
+                  src="https://placehold.co/120x60/1e40af/white?text=GCTU&font=roboto"
+                  alt="Ghana Communication Technology University logo"
+                  className="h-12"
+                />
+                <img
+                  src="https://placehold.co/120x60/1e40af/white?text=SEAL&font=roboto"
+                  alt="Official university seal with intricate border design"
+                  className="h-16"
+                />
+              </div>
+              <h1 className="mt-4 text-2xl font-bold tracking-wider">
+                OFFICIAL CLEARANCE CERTIFICATE
+              </h1>
+              <p className="text-blue-200 text-sm mt-1">
+                Issued under the authority of GCTU
+              </p>
+            </div>
+
+            {/* Certificate Body */}
+            <div className="p-8">
+              <div className="flex justify-between border-b border-blue-100 pb-2">
+                <span className="font-mono text-blue-700">
+                  No: GC-{new Date().getFullYear()}-
+                  {Math.floor(1000 + Math.random() * 9000)}
+                </span>
+                <span className="text-gray-600">
+                  {new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
+              </div>
+
+              <div className="mt-8 space-y-6">
+                <p className="text-lg leading-relaxed">
+                  This is to certify that{" "}
+                  <strong className="font-semibold text-blue-800">
+                    {studentData?.name}
+                  </strong>
+                  , having fulfilled all academic and financial obligations, is
+                  hereby granted complete clearance from the Ghana Communication
+                  Technology University.
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mt-8 text-sm">
+                  <div>
+                    <p className="text-gray-500">Index Number</p>
+                    <p className="font-medium">{studentData?.indexNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Programme</p>
+                    <p className="font-medium">{studentData?.programme}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Completion Date</p>
+                    <p className="font-medium">
+                      {new Date().toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Clearance Status</p>
+                    <p className="font-medium text-green-600">FULLY CLEARED</p>
+                  </div>
+                </div>
+
+                {/* Signatures Section */}
+                <div className="mt-12 pt-6 border-t border-blue-100">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div className="signature-box">
+                      <img
+                        src="https://placehold.co/160x70/e5e7eb/374151?text=Registrar+Signature&font=oswald"
+                        alt="Handwritten signature of Registrar in blue ink with stylized flourish"
+                        className="h-14 mx-auto"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">Registrar</p>
+                    </div>
+
+                    <div className="signature-box">
+                      <img
+                        src="https://placehold.co/160x70/e5e7eb/374151?text=Finance+Signature&font=oswald"
+                        alt="Handwritten signature of Head of Finance in black ink"
+                        className="h-14 mx-auto"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">
+                        Head of Finance
+                      </p>
+                    </div>
+
+                    <div className="signature-box">
+                      <img
+                        src="https://placehold.co/160x70/e5e7eb/374151?text=HOD+Signature&font=oswald"
+                        alt="Handwritten signature of Department Head with distinctive underline"
+                        className="h-14 mx-auto"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">
+                        Head of Department
+                      </p>
+                    </div>
+
+                    <div className="signature-box">
+                      <img
+                        src="https://placehold.co/160x70/e5e7eb/374151?text=Dean+Signature&font=oswald"
+                        alt="Stylized signature of Dean with executive flourish"
+                        className="h-14 mx-auto"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">
+                        Dean of Students
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Security Features */}
+                <div className="mt-8 text-xs text-gray-400 flex justify-between items-center">
+                  <span>
+                    Security Verification: GC-
+                    {Math.random().toString(36).substring(2, 10).toUpperCase()}
+                  </span>
+                  <span>
+                    <img
+                      src="https://placehold.co/80x30/1e40af/white?text=SCANNEME&font=roboto"
+                      alt="QR code for digital verification"
+                      className="h-6 inline ml-2"
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="bg-blue-50 p-4 flex justify-end space-x-3 border-t border-blue-100">
+              <button
+                onClick={handleCloseModal}
+                className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  window.print();
+                }}
+                className="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <i className="mr-1">↓</i> Download PDF
+              </button>
+              <button
+                onClick={() => {
+                  // Implement print functionality
+                  window.print();
+                }}
+                className="px-5 py-2 bg-white border border-blue-600 text-blue-600 text-sm font-medium rounded-md hover:bg-blue-50 transition-colors"
+              >
+                <i className="mr-1">🖶</i> Print
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer />
     </div>
   );

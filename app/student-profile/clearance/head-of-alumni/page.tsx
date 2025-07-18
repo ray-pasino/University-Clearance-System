@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut, Loader2 } from "lucide-react"; // Import Loader
+import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut, Loader2, ChevronLeft, ChevronRight } from "lucide-react"; // Import Loader
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -396,6 +396,20 @@ const page = () => {
                     </button>
                   </div>
                 </form>
+                  <div className="flex mt-4 space-x-4">
+                      <Link href="/student-profile/clearance/faculty">
+                      <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                        <ChevronLeft size={14}/>
+                        <span>View Faculty</span>
+                      </span>
+                      </Link>
+                       <Link href="/student-profile/clearance/hod">
+                      <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                        <span>View Head of Departments</span>
+                        <ChevronRight size={14}/>
+                      </span>
+                      </Link>
+                    </div>
               </div>
             </div>
             <ToastContainer position="bottom-right" /> {/* Positioning toast notifications */}

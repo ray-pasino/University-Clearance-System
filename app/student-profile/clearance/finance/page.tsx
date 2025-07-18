@@ -3,7 +3,15 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import {
+  FilePlus,
+  FileSearch,
+  FileX,
+  ShieldCheck,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -288,6 +296,21 @@ const page = () => {
                       <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
                       <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
                     </tr>
+
+                    {/* Academic Year 2024 / 2025 */}
+                    <tr className="bg-gray-50">
+                      <td
+                        colSpan={3}
+                        className="py-3 px-2 font-bold text-indigo-400"
+                      >
+                        Academic Year 2024 / 2025
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 5,830</td>
+                      <td className="py-3 px-2 text-[12px]">GH₵ 0.00</td>
+                    </tr>
                     <tr>
                       <td className="py-3 px-2 text-[12px] font-bold text-indigo-400">
                         Graduation Fee
@@ -378,6 +401,14 @@ const page = () => {
                           )}
                         </div>
                       </td>
+                    </tr>
+                    <tr className="flex mt-4">
+                      <Link href="/student-profile/clearance/library">
+                      <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                        <span>View Library</span>
+                        <ChevronRight size={14}/>
+                      </span>
+                      </Link>
                     </tr>
                   </tfoot>
                 </table>

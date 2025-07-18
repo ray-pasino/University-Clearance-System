@@ -3,7 +3,15 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, ShieldCheck, LogOut, FileX } from "lucide-react";
+import {
+  FilePlus,
+  FileSearch,
+  ShieldCheck,
+  LogOut,
+  FileX,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -206,10 +214,10 @@ const StudentClearancePage = () => {
             </div>
             <ul className="mb-8 space-y-12 text-[12px] font-semibold w-full px-4 border-t-1 border-gray-200 pt-4">
               <Link href="/student-profile/settings">
-              <li className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]">
-                <ShieldCheck size={22} />
-                <span className="hidden group-hover:inline">Settings</span>
-              </li>
+                <li className="text-[#6A788F] flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 px-2 rounded-[12px]">
+                  <ShieldCheck size={22} />
+                  <span className="hidden group-hover:inline">Settings</span>
+                </li>
               </Link>
               <li
                 onClick={handleLogout}
@@ -249,10 +257,10 @@ const StudentClearancePage = () => {
                 />
                 <div className="ml-2">
                   <h3 className="font-semibold text-lg sm:text-sm">
-                      {studentData?.name || "Loading..."}
+                    {studentData?.name || "Loading..."}
                   </h3>
                   <p className="text-[10px] sm:text-[8px]">
-                     {studentData?.email}
+                    {studentData?.email}
                   </p>
                 </div>
               </div>
@@ -303,6 +311,20 @@ const StudentClearancePage = () => {
                     Your clearance request was declined.
                   </div>
                 )}
+                <div className="flex mt-4 space-x-4">
+                  <Link href="/student-profile/clearance/head-of-alumni">
+                    <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                      <ChevronLeft size={14} />
+                      <span>View Head of Alumni Relations</span>
+                    </span>
+                  </Link>
+                  <Link href="/student-profile/clearance/dean-of-student-affairs">
+                    <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                      <span>View Dean of Student Affairs</span>
+                      <ChevronRight size={14} />
+                    </span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

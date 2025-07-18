@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DashNavbar from "@/app/components/DashNavbar";
 import Slider from "@/app/components/Slider";
 import Image from "next/image";
-import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut } from "lucide-react";
+import { FilePlus, FileSearch, FileX, ShieldCheck, LogOut, ChevronLeft, ChevronRight} from "lucide-react";
 import Link from "next/link";
 import Footer from "@/app/components/Footer";
 import { useRouter } from "next/navigation";
@@ -389,6 +389,20 @@ const page = () => {
                           )}
                         </div>
                       </td>
+                    </tr>
+                      <tr className="flex mt-4 space-x-4">
+                      <Link href="/student-profile/clearance/finance">
+                      <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                        <ChevronLeft size={14}/>
+                        <span>View Finance</span>
+                      </span>
+                      </Link>
+                       <Link href="/student-profile/clearance/faculty">
+                      <span className="text-[12px] cursor-pointer flex items-center justify-center bg-gray-400 text-white rounded-full px-3 py-1 ">
+                        <span>View Faculty</span>
+                        <ChevronRight size={14}/>
+                      </span>
+                      </Link>
                     </tr>
                   </tfoot>
                 </table>

@@ -1,5 +1,6 @@
 import connectionToDatabase from "@/lib/mongoDbConnection";
 import ClearanceRequest from "@/models/clearance_requests";
+import Student from "@/models/user_student";// Import the Student model
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
@@ -66,6 +67,12 @@ export async function POST(request: Request) {
     clearanceRequest.updatedAt = new Date();
 
     await clearanceRequest.save();
+
+    // If all departments are approved, update the student's clearance status
+    if (allApproved) {
+      const studentId = clearanceRequest.studentId; // Assuming you have a studentId in the clearanceRequest
+      await Student.findByIdAndUpdate(studentId, { clearaneStatus: "Accepted" });
+    }
 
     return NextResponse.json(
       { message: `Clearance request for ${department} has been approved.` },
