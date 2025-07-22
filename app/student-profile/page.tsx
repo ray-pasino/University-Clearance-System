@@ -277,7 +277,7 @@ const Page = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Certificate Header */}
-            <div className="bg-gray-300 text-white p-2 text-center">
+            <div className="bg-blue-300 text-white p-2 text-center">
               <div className="flex justify-center items-center">
                 <Image
                   src="/logo.png"
@@ -287,14 +287,8 @@ const Page = () => {
                   className="w-8 mx-2 md:w-24 mt-2"
                 />
 
-                {/* <img
-                  src="https://placehold.co/120x60/1e40af/white?text=GCTU&font=roboto"
-                  alt="Ghana Communication Technology University logo"
-                  className="h-12"
-                /> */}
-                {/* <p className="font-bold text-black text-4xl me-4">GCTU</p> */}
               </div>
-              <h1 className="text-2xl font-bold text-black tracking-wider">
+              <h1 className="text-2xl font-bold text-white tracking-wider">
                 OFFICIAL CLEARANCE CERTIFICATE
               </h1>
               <p className="text-black-50 text-sm mt-1">
