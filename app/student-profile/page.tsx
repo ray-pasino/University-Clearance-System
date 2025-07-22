@@ -277,29 +277,33 @@ const Page = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Certificate Header */}
-            <div className="bg-blue-800 text-white p-2 text-center">
-              <div className="flex justify-between items-center">
-                <img
+            <div className="bg-gray-300 text-white p-2 text-center">
+              <div className="flex justify-center items-center">
+                <Image
+                  src="/logo.png"
+                  alt="GCTU Logo"
+                  width={500}
+                  height={500}
+                  className="w-8 mx-2 md:w-24 mt-2"
+                />
+
+                {/* <img
                   src="https://placehold.co/120x60/1e40af/white?text=GCTU&font=roboto"
                   alt="Ghana Communication Technology University logo"
                   className="h-12"
-                />
-                <img
-                  src="https://placehold.co/120x60/1e40af/white?text=SEAL&font=roboto"
-                  alt="Official university seal with intricate border design"
-                  className="h-16"
-                />
+                /> */}
+                {/* <p className="font-bold text-black text-4xl me-4">GCTU</p> */}
               </div>
-              <h1 className="mt-4 text-2xl font-bold tracking-wider">
+              <h1 className="text-2xl font-bold text-black tracking-wider">
                 OFFICIAL CLEARANCE CERTIFICATE
               </h1>
-              <p className="text-blue-200 text-sm mt-1">
+              <p className="text-black-50 text-sm mt-1">
                 Issued under the authority of GCTU
               </p>
             </div>
 
             {/* Certificate Body */}
-            <div className="p-8">
+            <div className="px-8 py-2">
               <div className="flex justify-between border-b border-blue-100 pb-2">
                 <span className="font-mono text-blue-700">
                   No: GC-{new Date().getFullYear()}-
@@ -314,7 +318,7 @@ const Page = () => {
                 </span>
               </div>
 
-              <div className="mt-8 space-y-6">
+              <div className="mt-2">
                 <p className="text-lg leading-relaxed">
                   This is to certify that{" "}
                   <strong className="font-semibold text-blue-800">
@@ -359,6 +363,11 @@ const Page = () => {
                         alt="Handwritten signature of Registrar in blue ink with stylized flourish"
                         className="h-14 mx-auto"
                       />
+                      <img
+                        src="/registrarsignature.png"
+                        alt="Handwritten signature of Registrar in blue ink with stylized flourish"
+                        className="h-14 mx-auto"
+                      />
                       <p className="mt-2 text-xs text-gray-500">Registrar</p>
                     </div>
 
@@ -366,6 +375,11 @@ const Page = () => {
                       <img
                         src="https://placehold.co/160x70/e5e7eb/374151?text=Finance+Signature&font=oswald"
                         alt="Handwritten signature of Head of Finance in black ink"
+                        className="h-14 mx-auto"
+                      />
+                      <img
+                        src="/headoffinancesignature.png"
+                        alt="Handwritten signature of Registrar in blue ink with stylized flourish"
                         className="h-14 mx-auto"
                       />
                       <p className="mt-2 text-xs text-gray-500">
@@ -379,6 +393,11 @@ const Page = () => {
                         alt="Handwritten signature of Department Head with distinctive underline"
                         className="h-14 mx-auto"
                       />
+                      <img
+                        src="/hodsignature.png"
+                        alt="Handwritten signature of Registrar in blue ink with stylized flourish"
+                        className="h-14 mx-auto"
+                      />
                       <p className="mt-2 text-xs text-gray-500">
                         Head of Department
                       </p>
@@ -388,6 +407,11 @@ const Page = () => {
                       <img
                         src="https://placehold.co/160x70/e5e7eb/374151?text=Dean+Signature&font=oswald"
                         alt="Stylized signature of Dean with executive flourish"
+                        className="h-14 mx-auto"
+                      />
+                        <img
+                        src="/deanofstudentssignature.png"
+                        alt="Handwritten signature of Registrar in blue ink with stylized flourish"
                         className="h-14 mx-auto"
                       />
                       <p className="mt-2 text-xs text-gray-500">
