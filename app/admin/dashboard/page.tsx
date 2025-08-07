@@ -560,7 +560,7 @@ const Page = () => {
                     )
                     .map((department: Department) => (
                       <tr key={department._id} className="border-b">
-                        <td className="px-4 py-3">{request.studentId.name}</td>
+                        <td className="px-4 py-3">{request.studentId?.name}</td>
                         <td className="px-4 py-3">{department.name}</td>
                         <td className="px-4 py-3">
                           <span

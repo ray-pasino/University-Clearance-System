@@ -1,2 +1,17 @@
 @import "tailwindcss";
 
+@media print {
+  .cert-header {
+    background-color: #93c5fd !important; /* Tailwind's bg-blue-300 */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .action-buttons{
+    display: none !important;
+  }
+
+  .cert-logo{
+    width:140px !important;
+  }
+}

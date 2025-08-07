@@ -1,18 +1,22 @@
+// pages/api/admin/deletealumni.ts
 import { NextResponse } from "next/server";
 import connectionToDatabase from "@/lib/mongoDbConnection";
 import Alumni from "@/models/alumni";
 
-interface Params {
-  params: {
-    id: string;
-  };
-}
+export async function DELETE(request: Request) {
+  const { email } = await request.json(); // Get email from request body
 
-export async function DELETE(request: Request, { params }: Params) {
   try {
     await connectionToDatabase();
 
-    const alumni = await Alumni.findByIdAndDelete(params.id);
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: "Email is required" },
+        { status: 400 }
+      );
+    }
+
+    const alumni = await Alumni.findOneAndDelete({ email });
 
     if (!alumni) {
       return NextResponse.json(
@@ -23,7 +27,7 @@ export async function DELETE(request: Request, { params }: Params) {
 
     return NextResponse.json({
       success: true,
-      message: `Alumni with ID ${params.id} deleted successfully.`,
+      message: `Alumni with email ${email} deleted successfully.`,
     });
   } catch (error) {
     console.error("Error deleting alumni:", error);

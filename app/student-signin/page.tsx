@@ -132,8 +132,8 @@ const Page = () => {
                 className={seeAdminPassword ? "text-gray-500" : "text-black"}
               />
             </button>
-            <p className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer mt-2 text-right">
-              Forgot password?
+            <p className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer mt-2 text-left">
+              Forgot Password?
             </p>
           </div>
 

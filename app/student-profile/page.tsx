@@ -277,14 +277,14 @@ const Page = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Certificate Header */}
-            <div className="bg-blue-300 text-white p-2 text-center">
+            <div className="bg-blue-300 text-white p-2 text-center cert-header">
               <div className="flex justify-center items-center">
                 <Image
                   src="/logo.png"
                   alt="GCTU Logo"
                   width={500}
                   height={500}
-                  className="w-8 mx-2 md:w-24 mt-2"
+                  className="w-8 mx-2 md:w-24 mt-2 cert-logo"
                 />
 
               </div>
@@ -350,7 +350,7 @@ const Page = () => {
 
                 {/* Signatures Section */}
                 <div className="mt-12 pt-6 border-t border-blue-100">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
                     <div className="signature-box">
                       <img
                         src="https://placehold.co/160x70/e5e7eb/374151?text=Registrar+Signature&font=oswald"
@@ -423,7 +423,7 @@ const Page = () => {
                   </span>
                   <span>
                     <img
-                      src="https://placehold.co/80x30/1e40af/white?text=SCANNEME&font=roboto"
+                      src="https://placehold.co/80x30/1e40af/white?text=OFFICIAL&font=roboto"
                       alt="QR code for digital verification"
                       className="h-6 inline ml-2"
                     />
@@ -433,7 +433,7 @@ const Page = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-blue-50 p-4 flex justify-end space-x-3 border-t border-blue-100">
+            <div className="action-buttons bg-blue-50 p-4 flex justify-end space-x-3 border-t border-blue-100">
               <button
                 onClick={handleCloseModal}
                 className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"

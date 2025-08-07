@@ -167,7 +167,7 @@ const Page = () => {
               />
             </span>
             <p className="text-sm text-blue-600 cursor-pointer">
-              forgot password?
+              Forgot Password?
             </p>
           </div>
 

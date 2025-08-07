@@ -1,18 +1,22 @@
+// pages/api/admin/deleteadmin.ts
 import { NextResponse } from "next/server";
 import connectionToDatabase from "@/lib/mongoDbConnection";
 import Admin from "@/models/user_admin";
 
-interface Params {
-  params: {
-    id: string;
-  };
-}
+export async function DELETE(request: Request) {
+  const { email } = await request.json(); // Get email from request body
 
-export async function DELETE(request: Request, { params }: Params) {
   try {
     await connectionToDatabase();
 
-    const deletedAdmin = await Admin.findByIdAndDelete(params.id);
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: "Email is required" },
+        { status: 400 }
+      );
+    }
+
+    const deletedAdmin = await Admin.findOneAndDelete({ email });
 
     if (!deletedAdmin) {
       return NextResponse.json(
@@ -23,7 +27,7 @@ export async function DELETE(request: Request, { params }: Params) {
 
     return NextResponse.json({
       success: true,
-      message: `Admin with ID ${params.id} deleted successfully.`,
+      message: `Admin with email ${email} deleted successfully.`,
     });
   } catch (error) {
     console.error("Error deleting admin:", error);
