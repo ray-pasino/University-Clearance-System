@@ -15,6 +15,7 @@ const Page = () => {
   const [openSlider, setOpenSlider] = useState(false);
   const [studentData, setStudentData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clearanceCall, setClearanceCall] = useState(false)
   const router = useRouter();
 
   useEffect(() => {
@@ -58,7 +59,102 @@ const Page = () => {
     setIsModalOpen(false);
   };
 
+  const handleClearanceCall = () => {
+    setClearanceCall(!clearanceCall)
+  }
+
+  // function for clearance request
+    const requestClearance = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("You must be logged in to request clearance.");
+
+    try {
+      const response = await axios.post(
+        "/api/student/studentclearnace",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Axios response:", response);
+      toast.success(response.data.message, {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+        setClearanceCall(false); // Close the modal
+    } catch (error: any) {
+      console.error("Clearance error:", error);
+      if (error.response) {
+        toast.error(error.response.data.error || error.response.data.message, {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      } else {
+        toast.error("An error occurred while requesting clearance.", {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      }
+    }
+  };
+
   return (
+    <>
+    {/* clearance request confirmation modal */}
+     <div
+        className={`gradient fixed z-30 w-screen h-full bg-[#00000090] top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+          !clearanceCall ? "hidden" : ""
+        }`}
+        onClick={handleClearanceCall}
+      ></div>
+            <div className="flex items-center justify-center">
+        <div
+          className={`confirmation-container text-gray-600 font-semibold p-4 sm:p-8 mx-4 top-[35%] bg-[#ffffff] absolute rounded-md z-40 ${
+            !clearanceCall ? "hidden" : ""
+          }`}
+        >
+          Do You Want To Initiate Clearance Request?
+          <div className="buttons flex space-x-4 mt-4 sm:mt-8">
+            <Link href="/student-profile/view_clearance">
+              <button
+                className="cursor-pointer bg-blue-200 p-2 font-normal px-8 text-[12px] rounded-md"
+                onClick={() => {
+                  requestClearance()
+                  setClearanceCall(false); // Close the modal
+                }}
+              >
+                Yes
+              </button>
+            </Link>
+            <button
+              className="cursor-pointer bg-red-400 p-2 font-normal px-8 text-[12px] rounded-md"
+              onClick={handleClearanceCall}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+    {/* clearance request confirmation modal */}
+
+
     <div className="sm:flex">
       {/* Sidebar */}
       <div className="wrap-left group h-screen hidden sm:flex w-[8%] lg:w-[6%] xl:w-[4.5%] bg-[#ffffff] rounded-[20px] hover:w-[25%] lg:hover:w-[20%] xl:hover:w-[15%] transition-all duration-300 ease-in-out">
@@ -77,17 +173,7 @@ const Page = () => {
 
           <div className="mt-4 flex-1 w-full">
             <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-              <li>
-                <Link
-                  href="student-profile/clearance"
-                  className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
-                >
-                  <FilePlus size={22} />
-                  <span className="hidden group-hover:inline">
-                    Request Clearance
-                  </span>
-                </Link>
-              </li>
+             
               <li>
                 <Link
                   href="student-profile/view_clearance"
@@ -251,12 +337,10 @@ const Page = () => {
                   >
                     View Certificate
                   </button>
-                ) : (
-                  <Link href="student-profile/clearance">
-                    <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105">
+                ) : (                  
+                    <button className="cursor-pointer text-md bg-blue-800 text-white rounded-lg px-6 py-2 sm:py-3 transition duration-300 hover:scale-105" onClick={handleClearanceCall}>
                       Request Clearance
-                    </button>
-                  </Link>
+                    </button>                  
                 )}
               </ul>
             </div>
@@ -464,6 +548,7 @@ const Page = () => {
 
       <ToastContainer />
     </div>
+    </>
   );
 };
 

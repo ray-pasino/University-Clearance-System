@@ -1,17 +1,29 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { CheckCircle, XCircle, LogOut } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { CheckCircle, XCircle, LogOut, FileText, CheckSquare } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// Define interfaces for the department counts
+interface DepartmentCount {
+  count: number;
+  department: string;
+}
+
+interface ApprovedDepartmentCount {
+  approvedCount: number;
+  department: string;
+}
 
 const Page = () => {
   const router = useRouter();
   const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
   const [adminData, setAdminData] = useState<any>(null);
   const [requests, setRequests] = useState<any[]>([]);
+  const [libraryData, setLibraryData] = useState({ total: 0, approved: 0 });
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
@@ -51,8 +63,34 @@ const Page = () => {
       }
     };
 
+    const fetchLibraryData = async () => {
+      try {
+        const [totalRes, approvedRes] = await Promise.all([
+          axios.get("/api/admin/countdepartmetclearancerequest", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("/api/admin/countdepartmentsaccepted", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const totalLibrary = totalRes.data.departmentCounts.find(
+          (dept: DepartmentCount) => dept.department === "Library"
+        )?.count || 0;
+
+        const approvedLibrary = approvedRes.data.approvedDepartmentCounts.find(
+          (dept: ApprovedDepartmentCount) => dept.department === "Library"
+        )?.approvedCount || 0;
+
+        setLibraryData({ total: totalLibrary, approved: approvedLibrary });
+      } catch (err) {
+        console.error("Error fetching library data:", err);
+      }
+    };
+
     fetchAdminData();
     fetchClearanceRequests();
+    fetchLibraryData();
   }, [router]);
 
   const handleAction = async (
@@ -72,7 +110,7 @@ const Page = () => {
         endpoint,
         {
           requestId,
-          department: "Library",
+          department: "Library", // Ensure this matches the department in your data
         },
         {
           headers: {
@@ -111,42 +149,40 @@ const Page = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex-col">
-        <div className="sm:px-12 flex flex-col sm:flex-row items-center justify-between">
-          <div className="flex sm:space-x-2 items-center justify-center mb-4 sm:mb-12">
-            <Image
-              src="/logo.png"
-              alt="GCTU Logo"
-              width={500}
-              height={500}
-              className="w-12"
-            />
-            <h1 className="font-semibold md:text-md">GCTU Clearance System</h1>
-          </div>
+      <div className="sm:px-12 flex flex-col sm:flex-row items-center justify-between">
+        <div className="flex sm:space-x-2 items-center justify-center mb-4 sm:mb-12">
+          <Image
+            src="/logo.png"
+            alt="GCTU Logo"
+            width={500}
+            height={500}
+            className="w-12"
+          />
+          <h1 className="font-semibold md:text-md">GCTU Clearance System</h1>
+        </div>
 
-          <div
-            className="cursor-pointer profile-container text-gray-400 sm:flex mt-2  items-center  mb-4 sm:mb-12"
-            onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
-          >
-            <Image
-              src="/user male.png"
-              height={736}
-              width={736}
-              alt="user profile"
-              className="w-22 ms-8 sm:ms-0 sm:w-12 bg-gray-300 p-2 rounded-[50%]"
-            />
-            <div className="ml-2">
-              <h3 className="font-semibold text-lg sm:text-sm">
-                {adminData?.name || "Loading..."}
-              </h3>
-              <p className="text-[10px] sm:text-[8px]">
-                {adminData?.email || ""}
-              </p>
-            </div>
+        <div
+          className="cursor-pointer profile-container text-gray-400 sm:flex mt-2 items-center mb-4 sm:mb-12"
+          onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
+        >
+          <Image
+            src="/user male.png"
+            height={736}
+            width={736}
+            alt="user profile"
+            className="w-22 ms-8 sm:ms-0 sm:w-12 bg-gray-300 p-2 rounded-full"
+          />
+          <div className="ml-2">
+            <h3 className="font-semibold text-lg sm:text-sm">
+              {adminData?.name || "Loading..."}
+            </h3>
+            <p className="text-[10px] sm:text-[8px]">
+              {adminData?.email || ""}
+            </p>
           </div>
         </div>
         {showLogoutDropdown && (
-          <div className="absolute right-8 mt-[-42px] w-40 bg-red-200 hover:bg-red-100 rounded-md shadow-lg z-10">
+          <div className="absolute right-8 mt-12 w-40 bg-red-200 hover:bg-red-100 rounded-md shadow-lg z-10">
             <button
               className="cursor-pointer flex items-center block w-full text-left px-4 py-2 text-sm text-red-400"
               onClick={handleLogout}
@@ -158,84 +194,104 @@ const Page = () => {
         )}
       </div>
 
+      {/* Library Department Stats */}
+      <h2 className="text-lg font-semibold text-gray-700 mx-10 p-4 py-2">
+        Library Department Statistics
+      </h2>
+      <div className="mx-10 p-4 py-6 sm:py-10 mb-6 text-gray-400 flex flex-col sm:flex-row space-y-6 sm:space-y-0 sm:space-x-8 items-center">
+        <div className="p-4 sm:p-8 w-full flex flex-col items-center bg-white border-t-4 border-t-red-300 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+          <div className="flex items-center mb-2">
+            <FileText className="w-8 h-8 text-red-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-red-500">{libraryData.total}</h3>
+          <p className="text-sm text-gray-500">Total Requests</p>
+        </div>
+        <div className="p-4 sm:p-8 w-full flex flex-col items-center bg-white border-t-4 border-t-blue-300 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+          <div className="flex items-center mb-2">
+            <CheckSquare className="w-8 h-8 text-blue-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-blue-500">{libraryData.approved}</h3>
+          <p className="text-sm text-gray-500">Approved Requests</p>
+        </div>
+      </div>
+
       {/* Requests Section */}
       <h2 className="pl-12 sm:mb-4 md:text-lg text-gray-700 font-semibold">
         Library Clearance Requests
       </h2>
 
       <div className="mx-10 p-4 py-6 sm:py-10 mb-6 bg-white text-gray-400 mt-6 rounded-lg text-[10px] sm:text-[13px] shadow-md">
-        {(() => {
-          const libraryRequests = requests.filter((req) =>
-            req.departments.some((dept: any) => dept.name === "Library")
-          );
+        {requests.length === 0 ? (
+          <p className="text-gray-500 mt-4">No requests at this time.</p>
+        ) : (
+          requests
+            .filter((req) =>
+              req.departments.some((dept: any) => dept.name === "Library")
+            )
+            .map((req) => {
+              const libraryDept = req.departments.find(
+                (dept: any) => dept.name === "Library"
+              );
+              return (
+                <div key={req._id} className="mb-10">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+                    <div>
+                      <h3 className="text-[12px] sm:text-[14px] font-bold text-gray-700">
+                        {req.studentId?.name || "Unknown Student"}
+                      </h3>
+                      <p className="text-[10px] sm:text-[12px] text-gray-500">
+                        Clearance ID: {req.studentId?._id || "N/A"}
+                      </p>
+                      <p className="text-[10px] sm:text-[12px] text-gray-500">
+                        Requested On:{" "}
+                        {new Date(req.requestedAt).toLocaleDateString("en-GB")}
+                      </p>
+                    </div>
 
-          if (libraryRequests.length === 0) {
-            return <p className="text-gray-500 mt-4">No requests at this time.</p>;
-          }
-
-          return libraryRequests.map((req) => {
-            const libraryDept = req.departments.find(
-              (dept: any) => dept.name === "Library"
-            );
-            return (
-              <div key={req._id} className="mb-10">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-                  <div>
-                    <h3 className="text-[12px] sm:text-[14px] font-bold text-gray-700">
-                      {req.studentId?.name || "Unknown Student"}
-                    </h3>
-                    <p className="text-[10px] sm:text-[12px] text-gray-500">
-                      Clearance ID: {req.studentId?._id || "N/A"}
-                    </p>
-                    <p className="text-[10px] sm:text-[12px] text-gray-500">
-                      Requested On:{" "}
-                      {new Date(req.requestedAt).toLocaleDateString("en-GB")}
-                    </p>
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ${
+                        libraryDept?.status === "Requested"
+                          ? "bg-blue-100 text-blue-700"
+                          : libraryDept?.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : libraryDept?.status === "Approved"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {libraryDept?.status}
+                    </span>
                   </div>
 
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ${
-                      libraryDept?.status === "Requested"
-                        ? "bg-blue-100 text-blue-700"
-                        : libraryDept?.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : libraryDept?.status === "Approved"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {libraryDept?.status}
-                  </span>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                    >
+                      View Library History
+                    </button>
+
+                    <button
+                      onClick={() => handleAction(req._id, "Approved")}
+                      className="cursor-pointer bg-green-100 text-green-700 hover:bg-green-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                    >
+                      <CheckCircle size={14} />
+                      Accept Request
+                    </button>
+
+                    <button
+                      onClick={() => handleAction(req._id, "Rejected")}
+                      className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
+                    >
+                      <XCircle size={14} />
+                      Cancel Request
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 mt-3">
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
-                  >
-                    View Library History
-                  </button>
-
-                  <button
-                    onClick={() => handleAction(req._id, "Approved")}
-                    className="cursor-pointer bg-green-100 text-green-700 hover:bg-green-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
-                  >
-                    <CheckCircle size={14} />
-                    Accept Request
-                  </button>
-
-                  <button
-                    onClick={() => handleAction(req._id, "Rejected")}
-                    className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-600 hover:text-white inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium"
-                  >
-                    <XCircle size={14} />
-                    Cancel Request
-                  </button>
-                </div>
-              </div>
-            );
-          });
-        })()}
+              );
+            })
+        )}
       </div>
 
       {/* Modal */}
@@ -261,6 +317,7 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
+                {/* Example Data */}
                 <tr className="bg-gray-50">
                   <td colSpan={3} className="py-3 px-2 font-bold text-indigo-400">
                     Academic Year 2021 / 2022
@@ -271,7 +328,6 @@ const Page = () => {
                   <td className="py-3 px-2 text-[12px]">12 Jan 2022</td>
                   <td className="py-3 px-2 text-[12px] text-green-600 font-semibold">Returned</td>
                 </tr>
-
                 <tr className="bg-gray-50">
                   <td colSpan={3} className="py-3 px-2 font-bold text-indigo-400">
                     Academic Year 2022 / 2023
@@ -287,7 +343,6 @@ const Page = () => {
                   <td className="py-3 px-2 text-[12px]">25 Mar 2023</td>
                   <td className="py-3 px-2 text-[12px] text-red-500 font-semibold">Not Returned</td>
                 </tr>
-
                 <tr className="bg-gray-50">
                   <td colSpan={3} className="py-3 px-2 font-bold text-indigo-400">
                     Academic Year 2023 / 2024
@@ -311,6 +366,7 @@ const Page = () => {
           </div>
         </div>
       )}
+
       <ToastContainer />
     </div>
   );

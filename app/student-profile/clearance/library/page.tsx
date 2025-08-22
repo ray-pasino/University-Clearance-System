@@ -122,18 +122,7 @@ const page = () => {
 
             {/* slider body */}
             <div className="mt-4 flex-1 w-full">
-              <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">
-                <li>
-                  <Link
-                    href="/student-profile/clearance"
-                    className="text-[#6A788F] cursor-pointer flex items-center space-x-2 hover:bg-[#f2f8fc] py-2 hover:px-2 rounded-[12px]"
-                  >
-                    <FilePlus size={22} />
-                    <span className="hidden group-hover:inline">
-                      Request Clearance
-                    </span>
-                  </Link>
-                </li>
+              <ul className="mt-8 space-y-16 text-[12px] font-semibold w-full px-4">    
                 <li>
                   <Link
                     href="/student-profile/view_clearance"

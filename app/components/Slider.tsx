@@ -59,12 +59,6 @@ const Slider = ({ open, setOpen }: Props) => {
 
             <ul className="mt-8 space-y-10 text-[12px] font-semibold">
               <li>
-                <Link href="/student-profile/clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
-                <FilePlus size={18} />
-                <span className="font-semibold">Request Clearance</span>
-                </Link>
-              </li>
-              <li>
                 <Link href="/student-profile/view_clearance" className="text-[#6A788F] cursor-pointer flex items-center space-x-4">
                 <FileSearch size={18} />
                 <span className="font-semibold">View Clearance</span>

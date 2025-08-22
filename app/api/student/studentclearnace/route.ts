@@ -15,100 +15,81 @@ export async function POST(request: Request) {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
     const studentId = decoded.id;
 
-    const { department } = await request.json();
-
-    if (!department) {
-      return NextResponse.json(
-        { error: "Department is required" },
-        { status: 400 }
-      );
-    }
-
-    // Define the strict order of departments, excluding "Head of Alumni Relations"
+    // Define the strict order of departments
     const departmentOrder = [
       "Finance",
       "Library",
       "Faculty",
       "Head of Departments",
       "Dean of Student Affairs",
+      "Head of Alumni Relations"
     ];
-
-    const requestedIndex = departmentOrder.indexOf(department);
-
-    // Allow "Head of Alumni Relations" to be requested at any time
-    const isAlumniDepartment = department === "Head of Alumni Relations";
-
-    if (requestedIndex === -1 && !isAlumniDepartment) {
-      return NextResponse.json(
-        { error: "Invalid department name." },
-        { status: 400 }
-      );
-    }
 
     let existingRequest = await clearance_requests.findOne({ studentId });
 
     if (existingRequest) {
-      // Ensure departments are in correct order, except for "Head of Alumni Relations"
-      if (!isAlumniDepartment) {
-        for (let i = 0; i < requestedIndex; i++) {
-          const prevDept = departmentOrder[i];
-          const prevDeptData = existingRequest.departments.find(
-            (d: any) => d.name === prevDept
-          );
+      // Check if all departments are already requested
+      const allDepartmentsRequested = departmentOrder.every(dept => {
+        const deptData = existingRequest.departments.find((d: any) => d.name === dept);
+        return deptData && deptData.status !== "Not Requested";
+      });
 
-          if (!prevDeptData || prevDeptData.status !== "Approved") {
-            return NextResponse.json(
-              {
-                error: `You must complete clearance for ${prevDept} before proceeding to ${department}.`,
-              },
-              { status: 400 }
-            );
-          }
-        }
-      }
-
-      const deptIndex = existingRequest.departments.findIndex(
-        (d: any) => d.name === department
-      );
-
-      if (deptIndex !== -1) {
-        const currentStatus = existingRequest.departments[deptIndex].status;
-
-        if (currentStatus === "Not Requested") {
-          existingRequest.departments[deptIndex].status = "Pending";
-          existingRequest.departments[deptIndex].updatedAt = new Date();
-        } else {
-          return NextResponse.json(
-            {
-              message: `You have already requested clearance from ${department}.`,
-            },
-            { status: 400 }
-          );
-        }
-      } else {
-        existingRequest.departments.push({
-          name: department,
-          status: "Pending",
-          updatedAt: new Date(),
-        });
-      }
-
-      existingRequest.updatedAt = new Date();
-      await existingRequest.save();
-    } else {
-      // Enforce that only the first department can be requested initially
-      if (!isAlumniDepartment && requestedIndex !== 0) {
+      if (allDepartmentsRequested) {
         return NextResponse.json(
           {
-            error: `You must start clearance from ${departmentOrder[0]}.`,
+            message: "Clearance requests have already been sent to all departments.",
           },
           { status: 400 }
         );
       }
 
+      // Update all departments that haven't been requested yet
+      let hasNewRequests = false;
+      
+      for (const department of departmentOrder) {
+        const deptIndex = existingRequest.departments.findIndex(
+          (d: any) => d.name === department
+        );
+
+        if (deptIndex === -1) {
+          // Department doesn't exist in the request, add it as Pending
+          existingRequest.departments.push({
+            name: department,
+            status: "Pending",
+            updatedAt: new Date(),
+          });
+          hasNewRequests = true;
+        } else if (existingRequest.departments[deptIndex].status === "Not Requested") {
+          // Department exists but not requested yet, update to Pending
+          existingRequest.departments[deptIndex].status = "Pending";
+          existingRequest.departments[deptIndex].updatedAt = new Date();
+          hasNewRequests = true;
+        }
+        // If department is already requested (Pending/Approved/Declined), leave it as is
+      }
+
+      if (!hasNewRequests) {
+        return NextResponse.json(
+          {
+            message: "No new departments to request clearance from.",
+          },
+          { status: 400 }
+        );
+      }
+
+      existingRequest.updatedAt = new Date();
+      await existingRequest.save();
+    } else {
+      // Create new request with all departments set to Pending
+      const departments = departmentOrder.map(dept => ({
+        name: dept,
+        status: "Pending",
+        updatedAt: new Date(),
+      }));
+
       const newRequest = new clearance_requests({
         studentId,
-        departments: [{ name: department, status: "Pending" }],
+        departments,
         overallStatus: "Pending",
       });
 
@@ -120,7 +101,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      { message: `Clearance request sent to ${department}` },
+      { message: "Clearance requests sent to all departments successfully" },
       { status: 201 }
     );
   } catch (error) {
@@ -131,3 +112,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

@@ -1,17 +1,29 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { CheckCircle, XCircle, LogOut } from "lucide-react";
+import { CheckCircle, XCircle, LogOut, FileText, CheckSquare } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// Define interfaces for the department counts
+interface DepartmentCount {
+  count: number;
+  department: string;
+}
+
+interface ApprovedDepartmentCount {
+  approvedCount: number;
+  department: string;
+}
 
 const Page = () => {
   const router = useRouter();
   const [showLogoutDropdown, setShowLogoutDropdown] = useState(false);
   const [adminData, setAdminData] = useState<any>(null);
   const [requests, setRequests] = useState<any[]>([]);
+  const [financeData, setFinanceData] = useState({ total: 0, approved: 0 });
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
@@ -51,8 +63,34 @@ const Page = () => {
       }
     };
 
+    const fetchFinanceData = async () => {
+      try {
+        const [totalRes, approvedRes] = await Promise.all([
+          axios.get("/api/admin/countdepartmetclearancerequest", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("/api/admin/countdepartmentsaccepted", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const totalFinance = totalRes.data.departmentCounts.find(
+          (dept: DepartmentCount) => dept.department === "Finance"
+        )?.count || 0;
+
+        const approvedFinance = approvedRes.data.approvedDepartmentCounts.find(
+          (dept: ApprovedDepartmentCount) => dept.department === "Finance"
+        )?.approvedCount || 0;
+
+        setFinanceData({ total: totalFinance, approved: approvedFinance });
+      } catch (err) {
+        console.error("Error fetching finance data:", err);
+      }
+    };
+
     fetchAdminData();
     fetchClearanceRequests();
+    fetchFinanceData();
   }, [router]);
 
   const handleAction = async (
@@ -155,6 +193,27 @@ const Page = () => {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Finance Department Stats */}
+      <h2 className="text-lg font-semibold text-gray-700 mx-10 p-4 py-2">
+        Finance Department Statistics
+      </h2>
+      <div className="mx-10 p-4 py-6 sm:py-10 mb-6 text-gray-400 flex flex-col sm:flex-row space-y-6 sm:space-y-0 sm:space-x-8 items-center">
+        <div className="p-4 sm:p-8 w-full flex flex-col items-center bg-white border-t-4 border-t-red-300 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+          <div className="flex items-center mb-2">
+            <FileText className="w-8 h-8 text-red-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-red-500">{financeData.total}</h3>
+          <p className="text-sm text-gray-500">Total Requests</p>
+        </div>
+        <div className="p-4 sm:p-8 w-full flex flex-col items-center bg-white border-t-4 border-t-blue-300 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+          <div className="flex items-center mb-2">
+            <CheckSquare className="w-8 h-8 text-blue-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-blue-500">{financeData.approved}</h3>
+          <p className="text-sm text-gray-500">Approved Requests</p>
+        </div>
       </div>
 
       {/* Requests Section */}

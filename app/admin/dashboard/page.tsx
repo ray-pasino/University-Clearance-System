@@ -83,6 +83,36 @@ const Page = () => {
   const [loadingSuperAdmins, setLoadingSuperAdmins] = useState<boolean>(false);
   const [loadingAlumnis, setLoadingAlumnis] = useState<boolean>(false);
 
+
+  
+const [searchTerm, setSearchTerm] = useState("");
+const [statusFilter, setStatusFilter] = useState("");
+
+// Derived data: filter clearance requests before rendering
+const filteredRequests = clearanceRequests.flatMap((request) =>
+  request.departments
+    .filter((department) => department.status !== "Not Requested")
+    .filter((department) => {
+      const matchesSearch =
+        request.studentId?.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        department.status.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus = statusFilter
+        ? department.status === statusFilter
+        : true;
+
+      return matchesSearch && matchesStatus;
+    })
+    .map((department) => ({
+      ...department,
+      studentName: request.studentId?.name,
+      requestedAt: request.requestedAt,
+    }))
+);
+
   const fetchAdminCounts = async () => {
     try {
       const adminsResponse = await axios.get("/api/admin/countadmins");
@@ -133,7 +163,7 @@ const Page = () => {
       const response = await axios.get("/api/admin/listadmins");
       setAdmins(response.data.data);
     } catch (error) {
-      console.error("Error fetching admins:", error);
+      console.error("Error fetching department heads:", error);
     } finally {
       setLoadingAdmins(false);
     }
@@ -145,7 +175,7 @@ const Page = () => {
       const response = await axios.get("/api/admin/listsuperadmins");
       setSuperAdmins(response.data.data);
     } catch (error) {
-      console.error("Error fetching super admins:", error);
+      console.error("Error fetching system admins:", error);
     } finally {
       setLoadingSuperAdmins(false);
     }
@@ -353,8 +383,8 @@ const Page = () => {
       });
       fetchAdminCounts();
     } catch (error) {
-      console.error("Error adding admin:", error);
-      toast.error("Failed to add admin.");
+      console.error("Error adding department head:", error);
+      toast.error("Failed to add department head.");
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -444,7 +474,7 @@ const Page = () => {
           </div>
         </div>
         <h2 className="hidden ms-2 sm:block mb-8 mt-[-8] text-gray-600 text-2xl">
-          Super Administrator Panel
+          Administrator Panel
         </h2>
       </div>
 
@@ -483,7 +513,7 @@ const Page = () => {
             setShowAdminsModal(true);
           }}
         >
-          <h2 className="text-sm text-gray-500">Total Admins</h2>
+          <h2 className="text-sm text-gray-500">Total Department Heads</h2>
           <p className="text-2xl font-semibold text-purple-600">{adminCount}</p>
         </div>
         <div
@@ -493,7 +523,7 @@ const Page = () => {
             setShowSuperAdminModal(true);
           }}
         >
-          <h2 className="text-sm text-gray-500">Super Admins</h2>
+          <h2 className="text-sm text-gray-500">System Admins</h2>
           <p className="text-2xl font-semibold text-indigo-600">
             {superAdminCount}
           </p>
@@ -510,19 +540,14 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Table of Clearance Requests */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Recent Clearance Requests
-        </h2>
-
-        {/* Buttons for Add Admin and Add Student */}
-        <div className="flex space-x-4 mb-4">
+         {/* Buttons for Add Admin and Add Student */}
+         <div className="buton-container bg-white rounded-lg mb-8 p-4 flex items-center shadow-md">
+        <div className="flex space-x-4">
           <button
             className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-blue-600"
             onClick={() => setShowModal(true)} // Open modal
           >
-            Add Admin
+            Add Department Head
           </button>
           <button
             className="bg-green-500 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-green-600"
@@ -531,61 +556,86 @@ const Page = () => {
             Add Student
           </button>
         </div>
+         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm text-left">
-            <thead>
-              <tr className="bg-gray-100 text-gray-600 uppercase text-xs">
-                <th className="px-4 py-3">Student</th>
-                <th className="px-4 py-3">Department</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clearanceRequests.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center py-4 text-lg font-bold text-red-500"
-                  >
-                    No Requests
-                  </td>
-                </tr>
-              ) : (
-                clearanceRequests.map((request) =>
-                  request.departments
-                    .filter(
-                      (department) => department.status !== "Not Requested"
-                    )
-                    .map((department: Department) => (
-                      <tr key={department._id} className="border-b">
-                        <td className="px-4 py-3">{request.studentId?.name}</td>
-                        <td className="px-4 py-3">{department.name}</td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`font-medium ${
-                              department.status === "Approved"
-                                ? "text-green-600"
-                                : department.status === "Pending"
-                                ? "text-yellow-500"
-                                : "text-red-500"
-                            }`}
-                          >
-                            {department.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          {new Date(request.requestedAt).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
+   {/* Table of Clearance Requests */}
+<div className="bg-white rounded-2xl shadow-md p-6">
+  <h2 className="text-xl font-semibold mb-4 text-gray-700">
+    Recent Clearance Requests
+  </h2>
+
+  {/* Search + Filter Bar */}
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+    <input
+      type="text"
+      placeholder="Search by name, department, or status..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="px-3 py-2 border border-gray-300 rounded-lg w-full sm:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <select
+      value={statusFilter}
+      onChange={(e) => setStatusFilter(e.target.value)}
+      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="">All Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+  </div>
+
+  {/* Requests Table */}
+  <div className="overflow-x-auto">
+    <table className="min-w-full text-sm text-left">
+      <thead>
+        <tr className="bg-gray-100 text-gray-600 uppercase text-xs">
+          <th className="px-4 py-3">Student</th>
+          <th className="px-4 py-3">Department</th>
+          <th className="px-4 py-3">Status</th>
+          <th className="px-4 py-3">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredRequests.length === 0 ? (
+          <tr>
+            <td
+              colSpan={4}
+              className="text-center py-4 text-lg font-bold text-red-500"
+            >
+              No Requests Found
+            </td>
+          </tr>
+        ) : (
+          filteredRequests.map((req) => (
+            <tr key={req._id} className="border-b">
+              <td className="px-4 py-3">{req.studentName}</td>
+              <td className="px-4 py-3">{req.name}</td>
+              <td className="px-4 py-3">
+                <span
+                  className={`font-medium ${
+                    req.status === "Approved"
+                      ? "text-green-600"
+                      : req.status === "Pending"
+                      ? "text-yellow-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {req.status}
+                </span>
+              </td>
+              <td className="px-4 py-3">
+                {new Date(req.requestedAt).toLocaleDateString()}
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
       {/* Modal for Adding Admin */}
       {showModal && (
@@ -598,7 +648,7 @@ const Page = () => {
 
           {/* Modal */}
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
-            <h2 className="text-lg font-semibold mb-4">Add Admin</h2>
+            <h2 className="text-lg font-semibold mb-4">Add Department Head</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -673,7 +723,7 @@ const Page = () => {
                     }
                     className="mr-2"
                   />
-                  Super Admin Privilege
+                  System Admin Privilege
                 </label>
               </div>
               <div className="mb-4">
@@ -711,7 +761,7 @@ const Page = () => {
                 {loading ? (
                   <Loader2 className="animate-spin" size={20} />
                 ) : (
-                  "Add Admin"
+                  "Add Department Head"
                 )}
               </button>
             </form>
@@ -824,8 +874,8 @@ const Page = () => {
             onClick={() => setShowSuperAdminModal(false)}
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
-            <h2 className="text-lg font-semibold mb-4">Super Admins</h2>
-            {loadingSuperAdmins ? (<div className="text-center">Loading super admins...</div>):(
+            <h2 className="text-lg font-semibold mb-4">System Admins</h2>
+            {loadingSuperAdmins ? (<div className="text-center">Loading system admins...</div>):(
             <ul>
               {superAdmins.map((admin) => (
                 <li
@@ -906,8 +956,8 @@ const Page = () => {
             onClick={() => setShowAdminsModal(false)}
           />
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg p-6 shadow-lg w-96">
-            <h2 className="text-lg font-semibold mb-4">Admins</h2>
-            { loadingAdmins ? (<div className="text-center">Loading admins...</div>):(
+            <h2 className="text-lg font-semibold mb-4">Department Heads</h2>
+            { loadingAdmins ? (<div className="text-center">Loading department heads...</div>):(
             <ul>
               {admins.map((admins) => (
                 <li

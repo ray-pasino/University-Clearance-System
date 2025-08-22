@@ -189,7 +189,7 @@ const Page = () => {
               ></div>
             </span>
             <span className="ml-2 text-sm">
-              {isToggled ? "Sign in as super admin" : "Sign in as super admin?"}
+              {isToggled ? "Sign in as system admin" : "Sign in as system admin?"}
             </span>
           </div>
 
