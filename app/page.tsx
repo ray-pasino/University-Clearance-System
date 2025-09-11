@@ -69,7 +69,7 @@ export default function Home() {
         <h2 className="flex items-center mb-2 justify-center">Is this your first time here ? <ChevronDown size={13} className={`ms-[3px] transition-transform ease-in-out duration-300 cursor-pointer ${expand ? 'rotate-180' : ''}`} onClick={ ()=> setExpand(!expand)}/> </h2>
             <div ref={infoRef} className={`text-left bg-[#F9F7CC] opacity-80 overflow-hidden transition-transform ease-in-out duration-300 ${expand ? 'max-h-100 p-8 mx-42' : 'max-h-0 p-0 mx-0'} `}>For students, log in using your <strong>GCTU Index Number</strong> as your Username / <strong>GCTU STUDENT EMAIL</strong>, and <span className="text-red-500">HopJogRun985!</span> as the default password.
                 <hr className="my-6"/>
-                For faculty and staff, log in using your <strong>GCTU Username</strong>(i.e. your GCTU Email Address without the @gctu.edu.gh) / <strong>GCTU Official Email</strong>, and <span className="text-red-500">HopJogRun986!</span> as the default password.
+                F faculty and staff, log in using your <strong>GCTU Username</strong>(i.e. your GCTU Email Address without the @gctu.edu.gh) / <strong>GCTU Official Email</strong>, and <span className="text-red-500">HopJogRun986!</span> as the default password.
                 All first time users are required to change the default password to their own for personal security and privacy. If you don't know your login credentials, or you encounter any difficulty logging in, kindly contact the 0340009000, for assistance.
             </div>
         </div>
